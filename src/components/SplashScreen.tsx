@@ -28,9 +28,9 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
             <img 
               src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
               alt="Achadinhos Prime Logo"
-              className="w-32 h-32 object-contain animate-pulse-orange"
+              className="w-48 h-48 object-contain animate-pulse-orange"
             />
-            <Sparkles className="absolute -top-2 -right-2 w-8 h-8 text-white animate-pulse" />
+            <Sparkles className="absolute -top-2 -right-2 w-12 h-12 text-white animate-pulse" />
           </div>
         </div>
         

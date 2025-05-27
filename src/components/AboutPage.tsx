@@ -1,4 +1,3 @@
-
 import { Shield, Heart, Gift, Users } from 'lucide-react';
 
 const AboutPage = () => {
@@ -10,7 +9,7 @@ const AboutPage = () => {
             <img 
               src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
               alt="Achadinhos Prime"
-              className="w-24 h-24 mx-auto object-contain"
+              className="w-32 h-32 mx-auto object-contain"
             />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">

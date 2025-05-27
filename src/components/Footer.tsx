@@ -28,7 +28,7 @@ const Footer = () => {
             <img 
               src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
               alt="Achadinhos Prime"
-              className="w-16 h-16 object-contain"
+              className="w-24 h-24 object-contain"
             />
           </div>
           <h3 className="text-2xl font-bold mb-2">Achadinhos Prime</h3>

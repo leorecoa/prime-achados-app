@@ -19,16 +19,16 @@ const Header = ({ activeSection, onSectionChange }: HeaderProps) => {
   return (
     <header className="bg-gradient-orange shadow-lg sticky top-0 z-40">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
               alt="Achadinhos Prime"
-              className="w-8 h-8 object-contain"
+              className="w-12 h-12 object-contain"
             />
             <div>
-              <h1 className="text-xl font-bold text-white">Achadinhos</h1>
-              <p className="text-xs text-white/80 font-light tracking-wider">PRIME</p>
+              <h1 className="text-2xl font-bold text-white">Achadinhos</h1>
+              <p className="text-sm text-white/80 font-light tracking-wider">PRIME</p>
             </div>
           </div>
 
