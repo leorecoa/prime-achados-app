@@ -1,73 +1,100 @@
-# Welcome to your Lovable project
+# Prime Achados App
 
-## Project info
+Uma aplicação web para encontrar e compartilhar as melhores ofertas disponíveis na internet.
 
-**URL**: https://lovable.dev/projects/b3a127a4-8bf5-47fd-a296-ba1f96dab420
+## Tecnologias Utilizadas
 
-## How can I edit this code?
+- **React**: Biblioteca JavaScript para construção de interfaces
+- **TypeScript**: Superset tipado de JavaScript
+- **Vite**: Build tool e dev server
+- **Tailwind CSS**: Framework CSS utilitário
+- **Shadcn/UI**: Componentes de UI reutilizáveis
+- **React Router**: Roteamento para aplicações React
+- **React Query**: Gerenciamento de estado e cache para dados assíncronos
+- **Supabase**: Backend as a Service (BaaS) para banco de dados e autenticação
+- **Lucide React**: Biblioteca de ícones
 
-There are several ways of editing your application.
+## Funcionalidades
 
-**Use Lovable**
+- Visualização de produtos em destaque
+- Filtragem por categorias
+- Promoção diária com temporizador
+- Sistema de autenticação (login/cadastro)
+  - Login com email/senha
+  - Login com Google
+- Favoritar produtos
+- Responsividade para dispositivos móveis e desktop
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b3a127a4-8bf5-47fd-a296-ba1f96dab420) and start prompting.
+## Estrutura do Projeto
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+prime-achados-app/
+├── public/              # Arquivos estáticos
+├── src/
+│   ├── components/      # Componentes React
+│   │   ├── ui/          # Componentes de UI reutilizáveis
+│   ├── data/            # Dados estáticos e mocks
+│   ├── hooks/           # Hooks personalizados
+│   ├── integrations/    # Integrações com serviços externos
+│   │   └── supabase/    # Cliente e tipos do Supabase
+│   ├── lib/             # Funções utilitárias
+│   ├── pages/           # Componentes de página
+│   ├── App.tsx          # Componente principal
+│   └── main.tsx         # Ponto de entrada
+├── supabase/            # Configuração do Supabase
+└── ...                  # Arquivos de configuração
 ```
 
-**Edit a file directly in GitHub**
+## Configuração do Banco de Dados
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+O projeto utiliza o Supabase como banco de dados e serviço de autenticação. As tabelas principais são:
 
-**Use GitHub Codespaces**
+- `products`: Armazena informações sobre os produtos
+- `daily_deals`: Armazena as promoções diárias
+- `favorites`: Relaciona usuários e produtos favoritos
+- `categories`: Armazena as categorias disponíveis
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Configuração da Autenticação
 
-## What technologies are used for this project?
+Para configurar a autenticação com Google no Supabase:
 
-This project is built with:
+1. Acesse o painel do Supabase e vá para "Authentication" > "Providers"
+2. Ative o provedor "Google"
+3. Configure um projeto no Google Cloud Platform:
+   - Crie um projeto em https://console.cloud.google.com/
+   - Configure as credenciais OAuth (ID do cliente e segredo)
+   - Adicione a URL de redirecionamento: `https://[SEU_PROJETO].supabase.co/auth/v1/callback`
+4. Copie o ID do cliente e o segredo do cliente para o Supabase
+5. Adicione seu domínio (ou localhost para desenvolvimento) como origem autorizada
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Como Executar
 
-## How can I deploy this project?
+1. Clone o repositório
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Configure as variáveis de ambiente:
+   ```
+   VITE_SUPABASE_URL=sua_url_do_supabase
+   VITE_SUPABASE_ANON_KEY=sua_chave_anon_do_supabase
+   ```
+4. Execute o projeto em modo de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
 
-Simply open [Lovable](https://lovable.dev/projects/b3a127a4-8bf5-47fd-a296-ba1f96dab420) and click on Share -> Publish.
+## Melhorias Futuras
 
-## Can I connect a custom domain to my Lovable project?
+- Implementação de busca avançada
+- Sistema de notificações para novas ofertas
+- Página de detalhes do produto
+- Histórico de preços
+- Compartilhamento em redes sociais
+- Cupons de desconto
+- Área administrativa para gerenciamento de produtos
+- Mais opções de autenticação social (Facebook, Apple, etc.)
 
-Yes, you can!
+## Licença
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Este projeto está licenciado sob a licença MIT.
