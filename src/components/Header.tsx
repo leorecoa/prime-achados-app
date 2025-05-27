@@ -3,6 +3,7 @@ import { Search, Menu, X, Heart, User, LogOut } from 'lucide-react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { Input } from './ui/input';
+import LogoWithText from './LogoWithText';
 import { useAuth } from '@/hooks/use-supabase';
 import { useToast } from './ui/use-toast';
 import AuthDialog from './AuthDialog';
@@ -56,9 +57,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <a href="/" className="text-2xl font-bold text-orange-600">
-              Prime<span className="text-gray-900">Achados</span>
-            </a>
+            <LogoWithText size="md" />
           </div>
 
           {/* Search Bar - Desktop */}
