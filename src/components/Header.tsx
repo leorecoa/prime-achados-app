@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Menu, X, Heart, User, LogOut } from 'lucide-react';
 import { Button } from './ui/button';
+import { Link } from 'react-router-dom';
 import { Input } from './ui/input';
 import { useAuth } from '@/hooks/use-supabase';
 import { useToast } from './ui/use-toast';
@@ -78,6 +79,12 @@ const Header = () => {
               <Heart className="w-5 h-5" />
               <span>Favoritos</span>
             </Button>
+            
+            <Link to="/links-afiliados">
+              <Button variant="ghost" className="flex items-center space-x-2">
+                <span>Links Afiliados</span>
+              </Button>
+            </Link>
 
             {isAuthenticated ? (
               <DropdownMenu>
@@ -140,6 +147,12 @@ const Header = () => {
                 <Heart className="w-5 h-5" />
                 <span>Favoritos</span>
               </Button>
+              
+              <Link to="/links-afiliados">
+                <Button variant="ghost" className="flex items-center justify-start w-full">
+                  <span>Links Afiliados</span>
+                </Button>
+              </Link>
 
               {isAuthenticated ? (
                 <>
