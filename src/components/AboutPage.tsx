@@ -1,92 +1,77 @@
-import { Shield, Heart, Gift, Users } from 'lucide-react';
+import Header from './Header';
+import Footer from './Footer';
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-12">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="text-center mb-12">
-          <div className="mb-6">
-            <img 
-              src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
-              alt="Achadinhos Prime"
-              className="w-32 h-32 mx-auto object-contain"
-            />
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Sobre o Achadinhos Prime
-          </h1>
-          <p className="text-xl text-gray-600 leading-relaxed">
-            Sua plataforma de confiança para encontrar os melhores produtos com preços reais
-          </p>
-        </div>
-
-        <div className="bg-white rounded-3xl shadow-2xl p-8 mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Como Funciona</h2>
-          <p className="text-gray-700 leading-relaxed mb-6">
-            O <strong>Achadinhos Prime</strong> é um app independente que reúne os melhores produtos da internet com preços reais e ofertas verificadas. Nossa missão é facilitar sua busca por produtos de qualidade com descontos genuínos.
-          </p>
-          <p className="text-gray-700 leading-relaxed">
-            Utilizamos links de afiliados para manter a plataforma completamente gratuita para você. Quando você clica em "Ver Oferta", é redirecionado diretamente para a loja oficial, garantindo segurança e preços atualizados.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          <div className="bg-white rounded-2xl shadow-xl p-6">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="bg-gradient-orange p-3 rounded-full">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">100% Seguro</h3>
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      
+      <main className="flex-grow bg-gradient-to-br from-orange-50 to-orange-100 py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-6">
+              Sobre o Prime<span className="text-orange-600">Achados</span>
+            </h1>
+            
+            <div className="prose prose-orange max-w-none">
+              <p className="lead text-xl text-gray-700 mb-6">
+                O PrimeAchados é uma plataforma dedicada a encontrar e compartilhar as melhores ofertas 
+                disponíveis na internet, ajudando consumidores a economizar tempo e dinheiro.
+              </p>
+              
+              <h2>Nossa Missão</h2>
+              <p>
+                Nossa missão é simplificar a busca por ofertas e promoções, reunindo em um só lugar 
+                os melhores produtos com os preços mais competitivos. Acreditamos que todos merecem 
+                acesso a bons produtos por preços justos, e trabalhamos diariamente para tornar isso possível.
+              </p>
+              
+              <h2>Como Funcionamos</h2>
+              <p>
+                Nossa equipe de especialistas em compras monitora constantemente os principais 
+                e-commerces e lojas online em busca de descontos significativos, promoções relâmpago 
+                e ofertas exclusivas. Analisamos cuidadosamente cada produto, considerando:
+              </p>
+              
+              <ul>
+                <li>Qualidade e durabilidade do produto</li>
+                <li>Histórico de preços</li>
+                <li>Avaliações de outros consumidores</li>
+                <li>Confiabilidade do vendedor</li>
+                <li>Custo-benefício geral</li>
+              </ul>
+              
+              <p>
+                Apenas os produtos que atendem aos nossos rigorosos critérios são recomendados 
+                em nossa plataforma, garantindo que você sempre encontre ofertas que realmente valem a pena.
+              </p>
+              
+              <h2>Transparência</h2>
+              <p>
+                O PrimeAchados utiliza links de afiliados para algumas das ofertas apresentadas. 
+                Isso significa que podemos receber uma pequena comissão se você realizar uma compra 
+                através dos nossos links, sem nenhum custo adicional para você. Esta é uma das formas 
+                que utilizamos para manter nossa plataforma funcionando e continuar oferecendo este 
+                serviço gratuitamente.
+              </p>
+              
+              <p>
+                No entanto, nosso compromisso é sempre com você, o consumidor. Nossas recomendações 
+                são baseadas exclusivamente na qualidade das ofertas e nunca são influenciadas por 
+                comissões ou parcerias comerciais.
+              </p>
+              
+              <h2>Entre em Contato</h2>
+              <p>
+                Tem alguma dúvida, sugestão ou quer nos informar sobre uma oferta imperdível? 
+                Entre em contato conosco através do email <a href="mailto:contato@primeachados.com.br">contato@primeachados.com.br</a>.
+              </p>
             </div>
-            <p className="text-gray-600">
-              Todos os links direcionam para lojas oficiais e confiáveis. Sua segurança é nossa prioridade.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-xl p-6">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="bg-gradient-orange p-3 rounded-full">
-                <Heart className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Curadoria</h3>
-            </div>
-            <p className="text-gray-600">
-              Selecionamos manualmente cada produto, garantindo qualidade e bons preços.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-xl p-6">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="bg-gradient-orange p-3 rounded-full">
-                <Gift className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Sempre Gratuito</h3>
-            </div>
-            <p className="text-gray-600">
-              Nossa plataforma é mantida por parcerias, garantindo acesso gratuito a todos os usuários.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-xl p-6">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="bg-gradient-orange p-3 rounded-full">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Comunidade</h3>
-            </div>
-            <p className="text-gray-600">
-              Faça parte de uma comunidade que compartilha as melhores ofertas e dicas de compra.
-            </p>
           </div>
         </div>
-
-        <div className="bg-gradient-orange rounded-3xl p-8 text-white text-center">
-          <h2 className="text-3xl font-bold mb-4">Nossa Missão</h2>
-          <p className="text-xl leading-relaxed opacity-95">
-            "Democratizar o acesso a produtos de qualidade, conectando pessoas às melhores ofertas do mercado com transparência e confiança."
-          </p>
-        </div>
-      </div>
+      </main>
+      
+      <Footer />
     </div>
   );
 };
