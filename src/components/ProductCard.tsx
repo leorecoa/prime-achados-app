@@ -1,14 +1,46 @@
 
-import { ExternalLink, Star } from 'lucide-react';
-import { Product } from '../data/products';
+import { ExternalLink, Heart, Star } from 'lucide-react';
+import { Product, useFavorites } from '@/hooks/use-supabase';
+import { Button } from './ui/button';
+import { useToast } from './ui/use-toast';
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const { toast } = useToast();
+  const { favorites, addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
+  const isProductFavorite = isFavorite(product.id);
+
   const handleClick = () => {
-    window.open(product.affiliateLink, '_blank');
+    window.open(product.affiliate_link, '_blank');
+  };
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    try {
+      if (isProductFavorite) {
+        await removeFromFavorites.mutateAsync(product.id);
+        toast({
+          title: "Removido dos favoritos",
+          description: `${product.name} foi removido dos seus favoritos.`,
+        });
+      } else {
+        await addToFavorites.mutateAsync(product.id);
+        toast({
+          title: "Adicionado aos favoritos",
+          description: `${product.name} foi adicionado aos seus favoritos.`,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Você precisa estar logado para favoritar produtos.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -26,6 +58,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
           <span className="text-xs">{product.rating}</span>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className={`absolute bottom-4 right-4 rounded-full bg-white/80 hover:bg-white ${
+            isProductFavorite ? 'text-red-500' : 'text-gray-500'
+          }`}
+          onClick={handleFavoriteClick}
+        >
+          <Heart className={`w-5 h-5 ${isProductFavorite ? 'fill-red-500' : ''}`} />
+        </Button>
       </div>
       
       <div className="p-6">
@@ -35,10 +77,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
         
         <div className="flex items-center space-x-3 mb-4">
           <span className="text-2xl font-bold text-orange-600">
-            R$ {product.discountPrice.toFixed(2)}
+            R$ {product.discount_price.toFixed(2)}
           </span>
           <span className="text-sm text-gray-500 line-through">
-            R$ {product.originalPrice.toFixed(2)}
+            R$ {product.original_price.toFixed(2)}
           </span>
         </div>
         
