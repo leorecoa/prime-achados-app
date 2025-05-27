@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Twitter } from 'lucide-react';
+import LogoWithText from './LogoWithText';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -8,9 +9,9 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4">
-              Prime<span className="text-orange-500">Achados</span>
-            </h3>
+            <div className="mb-4">
+              <LogoWithText size="lg" />
+            </div>
             <p className="text-gray-400 mb-4">
               Encontre as melhores ofertas e promoções da internet em um só lugar.
               Economize tempo e dinheiro com nossas recomendações diárias.
@@ -75,9 +76,12 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
-          <p>© {currentYear} PrimeAchados. Todos os direitos reservados.</p>
-          <p className="mt-2 text-sm">
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+          <div className="flex justify-center mb-4">
+            <LogoWithText size="md" />
+          </div>
+          <p className="text-gray-500">© {currentYear} PrimeAchados. Todos os direitos reservados.</p>
+          <p className="mt-2 text-sm text-gray-500">
             Os preços e disponibilidade dos produtos são precisos na data/hora indicada e estão sujeitos a alterações.
             Qualquer informação de preço e disponibilidade exibida nos sites das lojas no momento da compra será aplicada à compra deste produto.
           </p>
