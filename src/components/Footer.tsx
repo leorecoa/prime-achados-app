@@ -1,85 +1,85 @@
-
-import { Instagram, Facebook, Twitter, Share2, UserPlus } from 'lucide-react';
+import { Facebook, Instagram, Twitter } from 'lucide-react';
 
 const Footer = () => {
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: 'Achadinhos Prime',
-        text: 'Encontre os melhores produtos com desconto!',
-        url: window.location.href,
-      });
-    } else {
-      // Fallback para desktop
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copiado para a área de transferência!');
-    }
-  };
-
-  const handleRefer = () => {
-    alert('Sistema de indicação em breve! 🚀');
-  };
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-orange-dark text-white py-12">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <img 
-              src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
-              alt="Achadinhos Prime"
-              className="w-24 h-24 object-contain"
-            />
-          </div>
-          <h3 className="text-2xl font-bold mb-2">Achadinhos Prime</h3>
-          <p className="text-orange-200">Achou, clicou, levou.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div className="text-center">
-            <h4 className="font-bold text-lg mb-4">Siga-nos</h4>
-            <div className="flex justify-center space-x-4">
-              <a href="#" className="bg-white/20 p-3 rounded-full hover:bg-white/30 transition-colors">
-                <Instagram className="w-6 h-6" />
+    <footer className="bg-gray-900 text-white">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 className="text-2xl font-bold mb-4">
+              Prime<span className="text-orange-500">Achados</span>
+            </h3>
+            <p className="text-gray-400 mb-4">
+              Encontre as melhores ofertas e promoções da internet em um só lugar.
+              Economize tempo e dinheiro com nossas recomendações diárias.
+            </p>
+            <div className="flex space-x-4">
+              <a href="#" className="text-gray-400 hover:text-orange-500 transition-colors">
+                <Facebook />
               </a>
-              <a href="#" className="bg-white/20 p-3 rounded-full hover:bg-white/30 transition-colors">
-                <Facebook className="w-6 h-6" />
+              <a href="#" className="text-gray-400 hover:text-orange-500 transition-colors">
+                <Instagram />
               </a>
-              <a href="#" className="bg-white/20 p-3 rounded-full hover:bg-white/30 transition-colors">
-                <Twitter className="w-6 h-6" />
+              <a href="#" className="text-gray-400 hover:text-orange-500 transition-colors">
+                <Twitter />
               </a>
             </div>
           </div>
-
-          <div className="text-center">
-            <h4 className="font-bold text-lg mb-4">Compartilhe</h4>
-            <button 
-              onClick={handleShare}
-              className="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full hover:bg-white/30 transition-all duration-300 flex items-center space-x-2 mx-auto group"
-            >
-              <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span>Compartilhar App</span>
-            </button>
+          
+          <div>
+            <h4 className="text-lg font-semibold mb-4">Links Rápidos</h4>
+            <ul className="space-y-2">
+              <li>
+                <a href="#" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  Sobre Nós
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  Contato
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  Política de Privacidade
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-orange-500 transition-colors">
+                  Termos de Uso
+                </a>
+              </li>
+            </ul>
           </div>
-
-          <div className="text-center">
-            <h4 className="font-bold text-lg mb-4">Indique</h4>
-            <button 
-              onClick={handleRefer}
-              className="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full hover:bg-white/30 transition-all duration-300 flex items-center space-x-2 mx-auto group"
-            >
-              <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span>Indique e Ganhe</span>
-            </button>
+          
+          <div>
+            <h4 className="text-lg font-semibold mb-4">Newsletter</h4>
+            <p className="text-gray-400 mb-4">
+              Receba as melhores ofertas diretamente no seu email.
+            </p>
+            <form className="flex">
+              <input
+                type="email"
+                placeholder="Seu email"
+                className="px-4 py-2 rounded-l-md flex-1 text-gray-900 focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-r-md transition-colors"
+              >
+                Inscrever
+              </button>
+            </form>
           </div>
         </div>
-
-        <div className="text-center pt-8 border-t border-white/20">
-          <p className="text-orange-200 text-sm">
-            © 2024 Achadinhos Prime. Todos os direitos reservados.
-          </p>
-          <p className="text-orange-300 text-xs mt-2">
-            Plataforma independente com links de afiliados
+        
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+          <p>© {currentYear} PrimeAchados. Todos os direitos reservados.</p>
+          <p className="mt-2 text-sm">
+            Os preços e disponibilidade dos produtos são precisos na data/hora indicada e estão sujeitos a alterações.
+            Qualquer informação de preço e disponibilidade exibida nos sites das lojas no momento da compra será aplicada à compra deste produto.
           </p>
         </div>
       </div>
