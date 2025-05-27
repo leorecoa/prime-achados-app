@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AboutPage from "./components/AboutPage";
 import AuthCallback from "./pages/AuthCallback";
+import AffiliateLinks from "./pages/AffiliateLinks";
 import { useEffect } from "react";
 import { supabase } from "./integrations/supabase/client";
 
@@ -51,6 +52,7 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/sobre" element={<AboutPage />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/links-afiliados" element={<AffiliateLinks />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
