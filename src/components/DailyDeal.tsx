@@ -1,4 +1,3 @@
-
 import { Clock, ExternalLink } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useDailyDeal } from '@/hooks/use-supabase';
@@ -15,6 +14,11 @@ const DailyDeal = () => {
 
   // Usar o deal do banco de dados ou o fallback
   const activeDeal = deal || fallbackDeal;
+
+  // Add safety checks for price values
+  const discountPrice = (activeDeal.discount_price || activeDeal.discountPrice || 0);
+  const originalPrice = (activeDeal.original_price || activeDeal.originalPrice || 0);
+  const discount = activeDeal.discount || 0;
 
   useEffect(() => {
     // Se temos um deal do banco de dados, calcular o tempo restante
@@ -149,13 +153,13 @@ const DailyDeal = () => {
             <h3 className="font-bold text-lg mb-1">{activeDeal.name}</h3>
             <div className="flex items-center space-x-2">
               <span className="text-2xl font-bold text-orange-600">
-                R$ {(activeDeal.discount_price || activeDeal.discountPrice).toFixed(2)}
+                R$ {discountPrice.toFixed(2)}
               </span>
               <span className="text-sm text-gray-500 line-through">
-                R$ {(activeDeal.original_price || activeDeal.originalPrice).toFixed(2)}
+                R$ {originalPrice.toFixed(2)}
               </span>
               <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
-                -{activeDeal.discount}%
+                -{discount}%
               </span>
             </div>
           </div>

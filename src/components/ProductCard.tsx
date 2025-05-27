@@ -13,6 +13,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { favorites, addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   const isProductFavorite = isFavorite(product.id);
 
+  // Add safety checks for price values
+  const discountPrice = product.discount_price || 0;
+  const originalPrice = product.original_price || 0;
+  const discount = product.discount || 0;
+  const rating = product.rating || 0;
+
   const handleClick = () => {
     window.open(product.affiliate_link, '_blank');
   };
@@ -52,11 +58,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
           className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
         />
         <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-          -{product.discount}%
+          -{discount}%
         </div>
         <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-full flex items-center space-x-1">
           <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-          <span className="text-xs">{product.rating}</span>
+          <span className="text-xs">{rating}</span>
         </div>
         <Button
           variant="ghost"
@@ -77,10 +83,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
         
         <div className="flex items-center space-x-3 mb-4">
           <span className="text-2xl font-bold text-orange-600">
-            R$ {product.discount_price.toFixed(2)}
+            R$ {discountPrice.toFixed(2)}
           </span>
           <span className="text-sm text-gray-500 line-through">
-            R$ {product.original_price.toFixed(2)}
+            R$ {originalPrice.toFixed(2)}
           </span>
         </div>
         
