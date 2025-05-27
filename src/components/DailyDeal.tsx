@@ -1,12 +1,13 @@
 
 import { Clock, ExternalLink } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { dailyDeal, timerConfig } from '../data/dailyDeal';
 
 const DailyDeal = () => {
   const [timeLeft, setTimeLeft] = useState({
-    hours: 23,
-    minutes: 45,
-    seconds: 30
+    hours: timerConfig.hours,
+    minutes: timerConfig.minutes,
+    seconds: timerConfig.seconds
   });
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const DailyDeal = () => {
   }, []);
 
   const handleClick = () => {
-    window.open('https://amzn.to/45eaCUr', '_blank');
+    window.open(dailyDeal.affiliateLink, '_blank');
   };
 
   return (
@@ -68,16 +69,22 @@ const DailyDeal = () => {
       <div className="bg-white rounded-2xl p-6 text-gray-900">
         <div className="flex items-center space-x-4 mb-4">
           <img
-            src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500"
-            alt="Produto do Dia"
+            src={dailyDeal.image}
+            alt={dailyDeal.name}
             className="w-20 h-20 rounded-xl object-cover"
           />
           <div className="flex-1">
-            <h3 className="font-bold text-lg mb-1">Smartphone Premium</h3>
+            <h3 className="font-bold text-lg mb-1">{dailyDeal.name}</h3>
             <div className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-orange-600">R$ 899,99</span>
-              <span className="text-sm text-gray-500 line-through">R$ 1.299,99</span>
-              <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">-31%</span>
+              <span className="text-2xl font-bold text-orange-600">
+                R$ {dailyDeal.discountPrice.toFixed(2)}
+              </span>
+              <span className="text-sm text-gray-500 line-through">
+                R$ {dailyDeal.originalPrice.toFixed(2)}
+              </span>
+              <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
+                -{dailyDeal.discount}%
+              </span>
             </div>
           </div>
         </div>

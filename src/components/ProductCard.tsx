@@ -1,17 +1,6 @@
 
 import { ExternalLink, Star } from 'lucide-react';
-
-interface Product {
-  id: string;
-  name: string;
-  image: string;
-  originalPrice: number;
-  discountPrice: number;
-  discount: number;
-  rating: number;
-  category: string;
-  affiliateLink: string;
-}
+import { Product } from '../data/products';
 
 interface ProductCardProps {
   product: Product;
