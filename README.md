@@ -11,7 +11,7 @@ Uma aplicação web para encontrar e compartilhar as melhores ofertas disponíve
 - **Shadcn/UI**: Componentes de UI reutilizáveis
 - **React Router**: Roteamento para aplicações React
 - **React Query**: Gerenciamento de estado e cache para dados assíncronos
-- **Supabase**: Backend as a Service (BaaS) para banco de dados e autenticação
+- **Supabase**: Backend as a Service (BaaS) para banco de dados
 - **Lucide React**: Biblioteca de ícones
 
 ## Funcionalidades
@@ -19,10 +19,7 @@ Uma aplicação web para encontrar e compartilhar as melhores ofertas disponíve
 - Visualização de produtos em destaque
 - Filtragem por categorias
 - Promoção diária com temporizador
-- Sistema de autenticação (login/cadastro)
-  - Login com email/senha
-  - Login com Google
-- Favoritar produtos
+- Acesso direto a links de afiliados
 - Responsividade para dispositivos móveis e desktop
 
 ## Estrutura do Projeto
@@ -47,25 +44,11 @@ prime-achados-app/
 
 ## Configuração do Banco de Dados
 
-O projeto utiliza o Supabase como banco de dados e serviço de autenticação. As tabelas principais são:
+O projeto utiliza o Supabase como banco de dados. As tabelas principais são:
 
 - `products`: Armazena informações sobre os produtos
 - `daily_deals`: Armazena as promoções diárias
-- `favorites`: Relaciona usuários e produtos favoritos
 - `categories`: Armazena as categorias disponíveis
-
-## Configuração da Autenticação
-
-Para configurar a autenticação com Google no Supabase:
-
-1. Acesse o painel do Supabase e vá para "Authentication" > "Providers"
-2. Ative o provedor "Google"
-3. Configure um projeto no Google Cloud Platform:
-   - Crie um projeto em https://console.cloud.google.com/
-   - Configure as credenciais OAuth (ID do cliente e segredo)
-   - Adicione a URL de redirecionamento: `https://[SEU_PROJETO].supabase.co/auth/v1/callback`
-4. Copie o ID do cliente e o segredo do cliente para o Supabase
-5. Adicione seu domínio (ou localhost para desenvolvimento) como origem autorizada
 
 ## Como Executar
 
@@ -93,7 +76,6 @@ Para configurar a autenticação com Google no Supabase:
 - Compartilhamento em redes sociais
 - Cupons de desconto
 - Área administrativa para gerenciamento de produtos
-- Mais opções de autenticação social (Facebook, Apple, etc.)
 
 ## Licença
 
