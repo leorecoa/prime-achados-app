@@ -1,26 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Search, Menu, X, Heart, User, LogOut } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { Input } from './ui/input';
-import LogoWithText from './LogoWithText';
-import { useAuth } from '@/hooks/use-supabase';
-import { useToast } from './ui/use-toast';
-import AuthDialog from './AuthDialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { session, isAuthenticated, signOut } = useAuth();
-  const { toast } = useToast();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,22 +16,6 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const handleSignOut = async () => {
-    try {
-      await signOut.mutateAsync();
-      toast({
-        title: 'Logout realizado',
-        description: 'Você foi desconectado com sucesso.',
-      });
-    } catch (error: any) {
-      toast({
-        title: 'Erro ao fazer logout',
-        description: error.message || 'Ocorreu um erro ao tentar desconectar.',
-        variant: 'destructive',
-      });
-    }
-  };
 
   return (
     <header
@@ -57,7 +27,9 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <LogoWithText size="md" />
+            <a href="/" className="text-2xl font-bold text-orange-600">
+              Prime<span className="text-gray-900">Achados</span>
+            </a>
           </div>
 
           {/* Search Bar - Desktop */}
@@ -74,43 +46,11 @@ const Header = () => {
 
           {/* Navigation - Desktop */}
           <nav className="hidden md:flex items-center space-x-2">
-            <Button variant="ghost" className="flex items-center space-x-2">
-              <Heart className="w-5 h-5" />
-              <span>Favoritos</span>
-            </Button>
-            
-            <Link to="/links-afiliados">
+            <Link to="/sobre">
               <Button variant="ghost" className="flex items-center space-x-2">
-                <span>Links Afiliados</span>
+                <span>Sobre</span>
               </Button>
             </Link>
-
-            {isAuthenticated ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2">
-                    <User className="w-5 h-5" />
-                    <span>Minha Conta</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>
-                    {session?.user?.email}
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    <span>Sair</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <AuthDialog>
-                <Button variant="default" className="bg-gradient-orange">
-                  Entrar
-                </Button>
-              </AuthDialog>
-            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -142,39 +82,11 @@ const Header = () => {
             </div>
 
             <div className="flex flex-col space-y-2">
-              <Button variant="ghost" className="flex items-center justify-start space-x-2">
-                <Heart className="w-5 h-5" />
-                <span>Favoritos</span>
-              </Button>
-              
-              <Link to="/links-afiliados">
+              <Link to="/sobre">
                 <Button variant="ghost" className="flex items-center justify-start w-full">
-                  <span>Links Afiliados</span>
+                  <span>Sobre</span>
                 </Button>
               </Link>
-
-              {isAuthenticated ? (
-                <>
-                  <Button variant="ghost" className="flex items-center justify-start space-x-2">
-                    <User className="w-5 h-5" />
-                    <span>Minha Conta</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="flex items-center justify-start space-x-2"
-                    onClick={handleSignOut}
-                  >
-                    <LogOut className="w-5 h-5" />
-                    <span>Sair</span>
-                  </Button>
-                </>
-              ) : (
-                <AuthDialog>
-                  <Button variant="default" className="bg-gradient-orange w-full">
-                    Entrar
-                  </Button>
-                </AuthDialog>
-              )}
             </div>
           </div>
         )}
