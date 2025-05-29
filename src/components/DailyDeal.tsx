@@ -15,11 +15,6 @@ const DailyDeal = () => {
   // Usar o deal do banco de dados ou o fallback
   const activeDeal = deal || fallbackDeal;
 
-  // Add safety checks for price values
-  const discountPrice = (activeDeal.discount_price || activeDeal.discountPrice || 0);
-  const originalPrice = (activeDeal.original_price || activeDeal.originalPrice || 0);
-  const discount = activeDeal.discount || 0;
-
   useEffect(() => {
     // Se temos um deal do banco de dados, calcular o tempo restante
     if (deal?.expires_at) {
@@ -108,7 +103,10 @@ const DailyDeal = () => {
   }
 
   return (
-    <div className="bg-gradient-orange rounded-3xl p-8 text-white shadow-2xl transform hover:scale-105 transition-all duration-300">
+    <div 
+      className="bg-gradient-orange rounded-3xl p-8 text-white shadow-2xl transform hover:scale-105 transition-all duration-300 cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="text-center mb-6">
         <h2 className="text-3xl font-bold mb-2">🔥 ACHADO DO DIA</h2>
         <p className="text-orange-100">Oferta imperdível por tempo limitado!</p>
@@ -153,25 +151,24 @@ const DailyDeal = () => {
             <h3 className="font-bold text-lg mb-1">{activeDeal.name}</h3>
             <div className="flex items-center space-x-2">
               <span className="text-2xl font-bold text-orange-600">
-                R$ {discountPrice.toFixed(2)}
+                R$ {(activeDeal.discount_price || activeDeal.discountPrice).toFixed(2)}
               </span>
               <span className="text-sm text-gray-500 line-through">
-                R$ {originalPrice.toFixed(2)}
+                R$ {(activeDeal.original_price || activeDeal.originalPrice).toFixed(2)}
               </span>
               <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
-                -{discount}%
+                -{activeDeal.discount}%
               </span>
             </div>
           </div>
         </div>
 
-        <button
-          onClick={handleClick}
+        <div
           className="w-full bg-gradient-orange text-white font-bold py-4 px-6 rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center space-x-2"
         >
           <span>🚀 APROVEITAR AGORA</span>
           <ExternalLink className="w-5 h-5" />
-        </button>
+        </div>
       </div>
     </div>
   );
