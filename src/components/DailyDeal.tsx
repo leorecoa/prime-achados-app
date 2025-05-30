@@ -1,3 +1,4 @@
+
 import { Clock, ExternalLink } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useDailyDeal } from '@/hooks/use-supabase';
@@ -61,12 +62,17 @@ const DailyDeal = () => {
   }, [deal]);
 
   const handleClick = () => {
-    window.open(activeDeal.affiliateLink, '_blank');
+    const link = deal ? deal.affiliate_link : fallbackDeal.affiliateLink;
+    window.open(link, '_blank');
   };
 
   // Safe access to prices with fallback to 0
-  const discountPrice = (activeDeal.discountPrice || 0).toFixed(2);
-  const originalPrice = (activeDeal.originalPrice || 0).toFixed(2);
+  const discountPrice = deal 
+    ? (deal.discount_price || 0).toFixed(2)
+    : (fallbackDeal.discountPrice || 0).toFixed(2);
+  const originalPrice = deal 
+    ? (deal.original_price || 0).toFixed(2)
+    : (fallbackDeal.originalPrice || 0).toFixed(2);
 
   if (isLoading) {
     return (
@@ -179,3 +185,4 @@ const DailyDeal = () => {
 };
 
 export default DailyDeal;
+
