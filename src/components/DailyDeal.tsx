@@ -61,8 +61,12 @@ const DailyDeal = () => {
   }, [deal]);
 
   const handleClick = () => {
-    window.open(activeDeal.affiliate_link || activeDeal.affiliateLink, '_blank');
+    window.open(activeDeal.affiliateLink, '_blank');
   };
+
+  // Safe access to prices with fallback to 0
+  const discountPrice = (activeDeal.discountPrice || 0).toFixed(2);
+  const originalPrice = (activeDeal.originalPrice || 0).toFixed(2);
 
   if (isLoading) {
     return (
@@ -151,10 +155,10 @@ const DailyDeal = () => {
             <h3 className="font-bold text-lg mb-1">{activeDeal.name}</h3>
             <div className="flex items-center space-x-2">
               <span className="text-2xl font-bold text-orange-600">
-                R$ {(activeDeal.discount_price || activeDeal.discountPrice).toFixed(2)}
+                R$ {discountPrice}
               </span>
               <span className="text-sm text-gray-500 line-through">
-                R$ {(activeDeal.original_price || activeDeal.originalPrice).toFixed(2)}
+                R$ {originalPrice}
               </span>
               <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">
                 -{activeDeal.discount}%
