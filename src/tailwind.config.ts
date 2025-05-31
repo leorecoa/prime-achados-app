@@ -132,12 +132,20 @@ export default {
             transform: 'scale(1.03)'
           }
         },
-        'float': {
+        'pulse-slow': {
           '0%, 100%': {
-            transform: 'translateY(0)'
+            opacity: '0.6'
           },
           '50%': {
-            transform: 'translateY(-10px)'
+            opacity: '0.9'
+          }
+        },
+        'float': {
+          '0%, 100%': {
+            transform: 'translateY(0) rotate(0deg)'
+          },
+          '50%': {
+            transform: 'translateY(-20px) rotate(5deg)'
           }
         },
         'shimmer': {
@@ -155,8 +163,9 @@ export default {
         'fade-in': 'fade-in 0.6s ease-out',
         'scale-in': 'scale-in 0.4s ease-out',
         'pulse-orange': 'pulse-orange 2s cubic-bezier(0.4,0,0.6,1) infinite',
-        'float': 'float 3s ease-in-out infinite',
-        'shimmer': 'shimmer 2s linear infinite'
+        'pulse-slow': 'pulse-slow 3s ease-in-out infinite',
+        'float': 'float 8s ease-in-out infinite',
+        'shimmer': 'shimmer 2.5s linear infinite'
       }
     }
   },

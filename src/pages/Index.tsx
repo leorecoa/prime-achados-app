@@ -1,12 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import HomePage from '@/components/HomePage';
 import AboutPage from '@/components/AboutPage';
 import AdminAccessButton from '@/components/AdminAccessButton';
+import SplashScreen from '@/components/SplashScreen';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simular tempo de carregamento para mostrar a splash screen
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const renderSection = () => {
     switch (activeSection) {
@@ -22,6 +33,10 @@ const Index = () => {
         return <HomePage />;
     }
   };
+
+  if (loading) {
+    return <SplashScreen />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
