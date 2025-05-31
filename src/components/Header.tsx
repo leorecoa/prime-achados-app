@@ -41,7 +41,7 @@ const Header = ({ activeSection, onSectionChange }: HeaderProps) => {
               <button
                 key={item.id}
                 onClick={() => handleSectionChange(item.id)}
-                className={`text-white hover:text-orange-200 transition-colors font-medium ${
+                className={`text-white hover:text-orange-200 transition-colors font-medium border-0 bg-transparent ${
                   activeSection === item.id ? 'text-orange-200 border-b-2 border-white' : ''
                 }`}
                 type="button"
@@ -53,13 +53,13 @@ const Header = ({ activeSection, onSectionChange }: HeaderProps) => {
 
           <div className="flex items-center space-x-4">
             <button 
-              className="text-white hover:text-orange-200 transition-colors"
+              className="text-white hover:text-orange-200 transition-colors border-0 bg-transparent"
               type="button"
             >
               <Search className="w-5 h-5" />
             </button>
             <button 
-              className="md:hidden text-white hover:text-orange-200 transition-colors"
+              className="md:hidden text-white hover:text-orange-200 transition-colors border-0 bg-transparent"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               type="button"
             >
@@ -74,7 +74,7 @@ const Header = ({ activeSection, onSectionChange }: HeaderProps) => {
               <button
                 key={item.id}
                 onClick={() => handleSectionChange(item.id)}
-                className={`block w-full text-left py-2 text-white hover:text-orange-200 transition-colors font-medium ${
+                className={`block w-full text-left py-2 text-white hover:text-orange-200 transition-colors font-medium border-0 bg-transparent ${
                   activeSection === item.id ? 'text-orange-200' : ''
                 }`}
                 type="button"

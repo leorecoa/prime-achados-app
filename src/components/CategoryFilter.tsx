@@ -9,25 +9,31 @@ interface CategoryFilterProps {
 const CategoryFilter = ({ categories, selectedCategory, onCategoryChange }: CategoryFilterProps) => {
   return (
     <div className="flex flex-wrap gap-2 mb-6">
-      <Button
-        variant={selectedCategory === null ? "categorySelected" : "category"}
+      <button
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+          selectedCategory === null 
+            ? "bg-orange-500 text-white" 
+            : "bg-white text-gray-700 border border-gray-300"
+        }`}
         onClick={() => onCategoryChange(null)}
-        className="rounded-full"
         type="button"
       >
         Todos
-      </Button>
+      </button>
       
       {categories.map((category) => (
-        <Button
+        <button
           key={category}
-          variant={selectedCategory === category ? "categorySelected" : "category"}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            selectedCategory === category 
+              ? "bg-orange-500 text-white" 
+              : "bg-white text-gray-700 border border-gray-300"
+          }`}
           onClick={() => onCategoryChange(category)}
-          className="rounded-full"
           type="button"
         >
           {category}
-        </Button>
+        </button>
       ))}
     </div>
   );
