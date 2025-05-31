@@ -1,83 +1,113 @@
-
-import { useState } from 'react';
-import CategoryFilter from './CategoryFilter';
-import ProductCard from './ProductCard';
+import { useState, useEffect } from 'react';
 import DailyDeal from './DailyDeal';
-import { useProducts, useCategories } from '@/hooks/use-supabase';
-import { Skeleton } from './ui/skeleton';
+import ProductCard from './ProductCard';
+import CategoryFilter from './CategoryFilter';
+import { Product } from '@/data/products';
+import { products as fallbackProducts } from '@/data/products';
 
 const HomePage = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const { data: products, isLoading: isLoadingProducts } = useProducts(activeCategory);
-  const { data: categories, isLoading: isLoadingCategories } = useCategories();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [categories, setCategories] = useState<string[]>([]);
+
+  // Carregar produtos
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        // Primeiro tenta carregar do localStorage
+        const storedProducts = localStorage.getItem('admin_products');
+        if (storedProducts) {
+          const parsedProducts = JSON.parse(storedProducts);
+          setProducts(parsedProducts);
+          
+          // Extrair categorias únicas
+          const uniqueCategories = Array.from(
+            new Set(parsedProducts.map((p: Product) => p.category).filter(Boolean))
+          ) as string[];
+          
+          setCategories(uniqueCategories);
+          setFilteredProducts(parsedProducts);
+        } else {
+          // Se não houver no localStorage, usa o fallback
+          setProducts(fallbackProducts);
+          
+          // Extrair categorias únicas do fallback
+          const uniqueCategories = Array.from(
+            new Set(fallbackProducts.map(p => p.category).filter(Boolean))
+          ) as string[];
+          
+          setCategories(uniqueCategories);
+          setFilteredProducts(fallbackProducts);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+        setProducts(fallbackProducts);
+        setFilteredProducts(fallbackProducts);
+        
+        // Extrair categorias únicas do fallback em caso de erro
+        const uniqueCategories = Array.from(
+          new Set(fallbackProducts.map(p => p.category).filter(Boolean))
+        ) as string[];
+        
+        setCategories(uniqueCategories);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
+
+  // Filtrar produtos por categoria
+  useEffect(() => {
+    if (selectedCategory) {
+      setFilteredProducts(products.filter(p => p.category === selectedCategory));
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [selectedCategory, products]);
+
+  const handleCategoryChange = (category: string | null) => {
+    setSelectedCategory(category);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100">
-      {isLoadingCategories ? (
-        <div className="bg-white/95 backdrop-blur-sm sticky top-16 z-30 py-4 border-b border-orange-200">
-          <div className="container mx-auto px-4">
-            <div className="flex overflow-x-auto space-x-4 pb-2">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <Skeleton key={i} className="h-10 w-28 rounded-full" />
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : (
+    <div className="container mx-auto px-4 py-8">
+      <section id="daily-deal" className="mb-12">
+        <DailyDeal />
+      </section>
+
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-6">Produtos em Destaque</h2>
+        
         <CategoryFilter 
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-          categories={categories || []}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
         />
-      )}
-      
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-12">
-          <DailyDeal />
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            ✨ Produtos em Destaque
-          </h2>
-          <p className="text-gray-600">
-            Os melhores achados com preços imperdíveis
-          </p>
-        </div>
-
-        {isLoadingProducts ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                <Skeleton className="w-full h-48" />
-                <div className="p-6">
-                  <Skeleton className="h-6 w-full mb-3" />
-                  <Skeleton className="h-8 w-32 mb-4" />
-                  <Skeleton className="h-12 w-full rounded-xl" />
-                </div>
-              </div>
+        
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div key={i} className="bg-gray-100 rounded-xl h-80 animate-pulse"></div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products?.map((product) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+            {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
+            
+            {filteredProducts.length === 0 && (
+              <div className="col-span-full text-center py-12 text-gray-500">
+                Nenhum produto encontrado nesta categoria.
+              </div>
+            )}
           </div>
         )}
-
-        {!isLoadingProducts && products?.length === 0 && (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-2xl font-bold text-gray-700 mb-2">
-              Nenhum produto encontrado
-            </h3>
-            <p className="text-gray-500">
-              Tente selecionar uma categoria diferente
-            </p>
-          </div>
-        )}
-      </div>
+      </section>
     </div>
   );
 };

@@ -1,32 +1,36 @@
+import { useState } from 'react';
 import Header from '@/components/Header';
-import HomePage from '@/components/HomePage';
 import Footer from '@/components/Footer';
-import { useEffect, useState } from 'react';
-import SplashScreen from '@/components/SplashScreen';
+import HomePage from '@/components/HomePage';
+import AboutPage from '@/components/AboutPage';
+import AdminAccessButton from '@/components/AdminAccessButton';
 
 const Index = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState('home');
 
-  useEffect(() => {
-    // Simular carregamento inicial
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return <SplashScreen />;
-  }
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'home':
+        return <HomePage />;
+      case 'about':
+        return <AboutPage />;
+      case 'daily-deal':
+        // Rolar para a seção do achado do dia
+        document.querySelector('#daily-deal')?.scrollIntoView({ behavior: 'smooth' });
+        return <HomePage />;
+      default:
+        return <HomePage />;
+    }
+  };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="min-h-screen flex flex-col">
+      <Header activeSection={activeSection} onSectionChange={setActiveSection} />
       <main className="flex-grow">
-        <HomePage />
+        {renderSection()}
       </main>
       <Footer />
+      <AdminAccessButton />
     </div>
   );
 };

@@ -1,93 +1,87 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Search, Menu, X } from 'lucide-react';
-import { Button } from './ui/button';
-import { Link } from 'react-router-dom';
-import { Input } from './ui/input';
 
-const Header = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+interface HeaderProps {
+  activeSection: string;
+  onSectionChange: (section: string) => void;
+}
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+const Header = ({ activeSection, onSectionChange }: HeaderProps) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const menuItems = [
+    { id: 'home', label: 'Início' },
+    { id: 'daily-deal', label: 'Achado do Dia' },
+    { id: 'about', label: 'Sobre' },
+  ];
+
+  const handleSectionChange = (sectionId: string) => {
+    onSectionChange(sectionId);
+    setIsMenuOpen(false);
+  };
 
   return (
-    <header
-      className={`sticky top-0 z-40 w-full transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
-      }`}
-    >
+    <header className="bg-gradient-orange shadow-lg sticky top-0 z-40">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center">
-            <a href="/" className="text-2xl font-bold text-orange-600">
-              Prime<span className="text-gray-900">Achados</span>
-            </a>
-          </div>
-
-          {/* Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Input
-                type="search"
-                placeholder="Buscar ofertas..."
-                className="pl-10 pr-4 py-2 rounded-full border-gray-200 focus:border-orange-500 focus:ring focus:ring-orange-200 w-full"
-              />
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center space-x-4">
+            <img 
+              src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
+              alt="Achadinhos Prime"
+              className="w-8 h-8 object-contain"
+            />
+            <div>
+              <h1 className="text-xl font-bold text-white">Achadinhos</h1>
+              <p className="text-xs text-white/80 font-light tracking-wider">PRIME</p>
             </div>
           </div>
 
-          {/* Navigation - Desktop */}
-          <nav className="hidden md:flex items-center space-x-2">
-            <Link to="/sobre">
-              <Button variant="ghost" className="flex items-center space-x-2">
-                <span>Sobre</span>
-              </Button>
-            </Link>
-          </nav>
+          <div className="hidden md:flex items-center space-x-8">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleSectionChange(item.id)}
+                className={`text-white hover:text-orange-200 transition-colors font-medium ${
+                  activeSection === item.id ? 'text-orange-200 border-b-2 border-white' : ''
+                }`}
+                type="button"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          <div className="flex items-center space-x-4">
+            <button 
+              className="text-white hover:text-orange-200 transition-colors"
+              type="button"
             >
-              {isMobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </Button>
+              <Search className="w-5 h-5" />
+            </button>
+            <button 
+              className="md:hidden text-white hover:text-orange-200 transition-colors"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              type="button"
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4">
-            <div className="relative w-full mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Input
-                type="search"
-                placeholder="Buscar ofertas..."
-                className="pl-10 pr-4 py-2 rounded-full border-gray-200 focus:border-orange-500 focus:ring focus:ring-orange-200 w-full"
-              />
-            </div>
-
-            <div className="flex flex-col space-y-2">
-              <Link to="/sobre">
-                <Button variant="ghost" className="flex items-center justify-start w-full">
-                  <span>Sobre</span>
-                </Button>
-              </Link>
-            </div>
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t border-white/20">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleSectionChange(item.id)}
+                className={`block w-full text-left py-2 text-white hover:text-orange-200 transition-colors font-medium ${
+                  activeSection === item.id ? 'text-orange-200' : ''
+                }`}
+                type="button"
+              >
+                {item.label}
+              </button>
+            ))}
           </div>
         )}
       </div>
