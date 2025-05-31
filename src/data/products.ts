@@ -1,14 +1,14 @@
-
 export interface Product {
   id: string;
   name: string;
   image: string;
   originalPrice: number;
   discountPrice: number;
-  discount: number;
-  rating: number;
-  category: string;
+  discount?: number;
+  rating?: number;
+  category?: string;
   affiliateLink: string;
+  description?: string;
 }
 
 export const products: Product[] = [
@@ -99,5 +99,35 @@ export const products: Product[] = [
     rating: 4.6,
     category: 'home',
     affiliateLink: 'https://amzn.to/45eaCUr'
+  },
+  {
+    id: '9',
+    name: 'Fone de Ouvido Bluetooth',
+    image: '/placeholder.svg',
+    originalPrice: 199.90,
+    discountPrice: 149.90,
+    affiliateLink: 'https://exemplo.com/fone-bluetooth',
+    description: 'Fone de ouvido bluetooth com cancelamento de ruído e bateria de longa duração.',
+    category: 'Eletrônicos'
+  },
+  {
+    id: '10',
+    name: 'Smartwatch Fitness',
+    image: '/placeholder.svg',
+    originalPrice: 299.90,
+    discountPrice: 249.90,
+    affiliateLink: 'https://exemplo.com/smartwatch',
+    description: 'Smartwatch com monitor cardíaco, contador de passos e notificações.',
+    category: 'Eletrônicos'
+  },
+  {
+    id: '11',
+    name: 'Mochila para Notebook',
+    image: '/placeholder.svg',
+    originalPrice: 149.90,
+    discountPrice: 119.90,
+    affiliateLink: 'https://exemplo.com/mochila',
+    description: 'Mochila resistente à água com compartimento acolchoado para notebook.',
+    category: 'Acessórios'
   }
 ];
