@@ -1,24 +1,24 @@
+import { Product } from './products';
 
-export interface DailyDeal {
-  id: string;
-  name: string;
-  image: string;
-  originalPrice: number;
-  discountPrice: number;
+export interface DailyDeal extends Product {
   discount: number;
-  affiliateLink: string;
-  description: string;
+  timerConfig?: {
+    hours: number;
+    minutes: number;
+    seconds: number;
+  };
 }
 
 export const dailyDeal: DailyDeal = {
-  id: 'daily-1',
-  name: 'Smartphone Premium',
-  image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500',
-  originalPrice: 1299.99,
-  discountPrice: 899.99,
-  discount: 31,
-  affiliateLink: 'https://amzn.to/45eaCUr',
-  description: 'O smartphone mais esperado do ano com câmera profissional!'
+  id: "daily-1",
+  name: "Headphone Gamer RGB",
+  image: "/placeholder.svg",
+  originalPrice: 349.90,
+  discountPrice: 199.90,
+  discount: 43,
+  affiliateLink: "https://exemplo.com/headphone-gamer",
+  description: "Headphone gamer com iluminação RGB, som surround 7.1 e microfone destacável.",
+  category: "Eletrônicos"
 };
 
 // Configuração do timer (em horas, minutos, segundos)
