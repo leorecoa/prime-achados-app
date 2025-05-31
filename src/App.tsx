@@ -7,6 +7,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AboutPage from "./components/AboutPage";
+import AdminAccessButton from "./components/AdminAccessButton";
+import AdminIndex from "./pages/admin/AdminIndex";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminDailyDeal from "./pages/admin/AdminDailyDeal";
+import AdminLayout from "./components/admin/AdminLayout";
+import { AdminProvider } from "./contexts/AdminContext";
 
 // Configuração do React Query com retry e staleTime
 const queryClient = new QueryClient({
@@ -22,19 +28,30 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/sobre" element={<AboutPage />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </TooltipProvider>
+      <AdminProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/sobre" element={<AboutPage />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminIndex />} />
+              <Route path="/admin/*" element={<AdminLayout />}>
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="daily-deal" element={<AdminDailyDeal />} />
+              </Route>
+              
+              {/* Catch-all route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <AdminAccessButton />
+          </BrowserRouter>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </TooltipProvider>
+      </AdminProvider>
     </QueryClientProvider>
   );
 };
