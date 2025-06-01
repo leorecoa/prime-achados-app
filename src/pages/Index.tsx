@@ -5,15 +5,18 @@ import HomePage from '@/components/HomePage';
 import AboutPage from '@/components/AboutPage';
 import AdminAccessButton from '@/components/AdminAccessButton';
 import SplashScreen from '@/components/SplashScreen';
+import WelcomeGradient from '@/components/WelcomeGradient';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [loading, setLoading] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
     // Simular tempo de carregamento para mostrar a splash screen
     const timer = setTimeout(() => {
       setLoading(false);
+      setShowWelcome(true);
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -40,6 +43,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {showWelcome && <WelcomeGradient />}
       <Header activeSection={activeSection} onSectionChange={setActiveSection} />
       <main className="flex-grow">
         {renderSection()}
