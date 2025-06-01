@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import DailyDeal from './DailyDeal';
 import ProductCard from './ProductCard';
 import CategoryFilter from './CategoryFilter';
+import PromotionalBanner from './PromotionalBanner';
 import { Product } from '@/data/products';
 import { products as fallbackProducts } from '@/data/products';
+import { RefreshCw } from 'lucide-react';
 
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,11 +13,12 @@ const HomePage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState<string[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Função para recarregar produtos quando o localStorage mudar
   const loadProducts = async () => {
     try {
-      setIsLoading(true);
+      setIsRefreshing(true);
       // Primeiro tenta carregar do localStorage
       const storedProducts = localStorage.getItem('admin_products');
       if (storedProducts) {
@@ -28,7 +31,11 @@ const HomePage = () => {
         ) as string[];
         
         setCategories(uniqueCategories);
-        setFilteredProducts(parsedProducts);
+        
+        // Manter a categoria selecionada se existir nos novos produtos
+        if (selectedCategory && !uniqueCategories.includes(selectedCategory)) {
+          setSelectedCategory(null);
+        }
       } else {
         // Se não houver no localStorage, usa o fallback
         setProducts(fallbackProducts);
@@ -39,12 +46,10 @@ const HomePage = () => {
         ) as string[];
         
         setCategories(uniqueCategories);
-        setFilteredProducts(fallbackProducts);
       }
     } catch (error) {
       console.error('Erro ao carregar produtos:', error);
       setProducts(fallbackProducts);
-      setFilteredProducts(fallbackProducts);
       
       // Extrair categorias únicas do fallback em caso de erro
       const uniqueCategories = Array.from(
@@ -54,6 +59,7 @@ const HomePage = () => {
       setCategories(uniqueCategories);
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -66,7 +72,7 @@ const HomePage = () => {
   useEffect(() => {
     // Função para lidar com mudanças no localStorage
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'admin_products' || e.key === 'admin_daily_deal') {
+      if (e.key === 'admin_products' || e.key === 'admin_daily_deal' || e.key === 'admin_banners') {
         loadProducts();
       }
     };
@@ -110,17 +116,25 @@ const HomePage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Banner superior */}
+      <PromotionalBanner position="top" />
+      
       <section id="daily-deal" className="mb-12">
         <DailyDeal />
       </section>
+
+      {/* Banner do meio */}
+      <PromotionalBanner position="middle" />
 
       <section className="mb-12">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Produtos em Destaque</h2>
           <button 
             onClick={handleRefresh}
-            className="text-sm bg-orange-100 hover:bg-orange-200 text-orange-800 px-3 py-1 rounded-full transition-colors"
+            className="text-sm bg-orange-100 hover:bg-orange-200 text-orange-800 px-3 py-1 rounded-full transition-colors flex items-center"
+            disabled={isRefreshing}
           >
+            <RefreshCw className={`w-3 h-3 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
             Atualizar
           </button>
         </div>
@@ -151,6 +165,9 @@ const HomePage = () => {
           </div>
         )}
       </section>
+      
+      {/* Banner inferior */}
+      <PromotionalBanner position="bottom" />
     </div>
   );
 };

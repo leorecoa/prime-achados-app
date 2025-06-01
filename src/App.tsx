@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +12,7 @@ import AdminAccessButton from "./components/AdminAccessButton";
 import AdminIndex from "./pages/admin/AdminIndex";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminDailyDeal from "./pages/admin/AdminDailyDeal";
+import AdminBanners from "./pages/admin/AdminBanners";
 import AdminLayout from "./components/admin/AdminLayout";
 import { AdminProvider } from "./contexts/AdminContext";
 
@@ -42,6 +44,7 @@ const App = () => {
               <Route path="/admin/*" element={<AdminLayout />}>
                 <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="daily-deal" element={<AdminDailyDeal />} />
+                <Route path="banners" element={<AdminBanners />} />
               </Route>
               
               {/* Catch-all route */}
