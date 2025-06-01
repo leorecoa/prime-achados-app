@@ -81,7 +81,7 @@ const FeaturedProductsCarousel = ({ products, isLoading }: FeaturedProductsCarou
 
   if (isLoading) {
     return (
-      <div className="relative w-full h-[400px] bg-gray-100 rounded-2xl animate-pulse overflow-hidden">
+      <div className="relative w-full aspect-[16/9] bg-gray-100 rounded-2xl animate-pulse overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-8 h-8 border-4 border-gray-300 border-t-gray-400 rounded-full animate-spin"></div>
         </div>
@@ -95,7 +95,7 @@ const FeaturedProductsCarousel = ({ products, isLoading }: FeaturedProductsCarou
 
   return (
     <div 
-      className="relative w-full overflow-hidden rounded-2xl shadow-xl bg-gradient-to-r from-orange-600 to-rose-500"
+      className="relative w-full overflow-hidden rounded-2xl shadow-xl bg-gradient-to-r from-orange-600 to-rose-500 aspect-[16/9]"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -125,7 +125,7 @@ const FeaturedProductsCarousel = ({ products, isLoading }: FeaturedProductsCarou
 
       {/* Carrossel */}
       <div 
-        className="flex transition-transform duration-500 ease-out h-[400px]"
+        className="flex transition-transform duration-500 ease-out h-full"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {products.map((product, index) => (
@@ -137,12 +137,15 @@ const FeaturedProductsCarousel = ({ products, isLoading }: FeaturedProductsCarou
             {/* Imagem de fundo com overlay gradiente */}
             <div className="absolute inset-0">
               <img 
-                src={product.image} 
+                src={`${product.image}?w=1200&h=675&fit=crop&format=webp`}
                 alt={product.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://placehold.co/1200x600?text=Imagem+Indisponível';
+                  (e.target as HTMLImageElement).src = 'https://placehold.co/1200x675?text=Imagem+Indisponível';
                 }}
+                width="1200"
+                height="675"
+                loading={index === 0 ? "eager" : "lazy"}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
             </div>

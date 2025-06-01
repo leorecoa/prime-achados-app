@@ -61,14 +61,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {/* Efeito de brilho no canto */}
         <div className={`absolute -top-20 -right-20 w-40 h-40 bg-orange-500/20 rounded-full blur-xl transition-opacity duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`}></div>
         
-        <img 
-          src={product.image} 
-          alt={product.name}
-          className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = 'https://placehold.co/400x300?text=Imagem+Indisponível';
-          }}
-        />
+        {/* Imagem quadrada 1:1 */}
+        <div className="aspect-square overflow-hidden">
+          <img 
+            src={`${product.image}?w=800&h=800&fit=crop&format=webp`}
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = 'https://placehold.co/800x800?text=Imagem+Indisponível';
+            }}
+            width="800"
+            height="800"
+            loading="lazy"
+          />
+        </div>
         
         {/* Etiqueta de desconto com efeito de vidro */}
         <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-full">

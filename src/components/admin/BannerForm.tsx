@@ -94,18 +94,9 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
     }
   };
 
-  // Recomendações de proporção com base na posição
-  const getRecommendedAspectRatio = () => {
-    switch (formData.position) {
-      case 'top':
-        return '5:1';
-      case 'middle':
-        return '6:1';
-      case 'bottom':
-        return '7:1';
-      default:
-        return '6:1';
-    }
+  // Recomendações de tamanho com base na posição
+  const getRecommendedSize = () => {
+    return '1920 x 600 pixels (16:5)';
   };
 
   // Verificar se a proporção da imagem é adequada
@@ -113,24 +104,10 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
     if (!imageSize) return true;
     
     const ratio = imageSize.width / imageSize.height;
-    const minRatio = 4; // Pelo menos 4:1
-    const maxRatio = 8; // No máximo 8:1
+    const targetRatio = 16/5; // Proporção 16:5
+    const tolerance = 0.2; // 20% de tolerância
     
-    return ratio >= minRatio && ratio <= maxRatio;
-  };
-
-  // Renderizar a pré-visualização com a proporção correta
-  const getPreviewAspectRatio = () => {
-    switch (formData.position) {
-      case 'top':
-        return 'aspect-[5/1]';
-      case 'middle':
-        return 'aspect-[6/1]';
-      case 'bottom':
-        return 'aspect-[7/1]';
-      default:
-        return 'aspect-[6/1]';
-    }
+    return Math.abs(ratio - targetRatio) <= tolerance;
   };
 
   return (
@@ -189,13 +166,13 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
             
             <div className="text-xs text-gray-500 flex items-center">
               <AlertCircle className="w-3 h-3 mr-1" />
-              Proporção recomendada: {getRecommendedAspectRatio()} (formato paisagem)
+              Tamanho recomendado: {getRecommendedSize()} (formato WebP ou JPG)
             </div>
             
             {imagePreview && (
               <div className="mt-2">
                 <p className="text-sm text-gray-500 mb-2">Pré-visualização:</p>
-                <div className={`border rounded-md overflow-hidden ${getPreviewAspectRatio()}`}>
+                <div className="border rounded-md overflow-hidden aspect-[16/5]">
                   <div className="relative w-full h-full">
                     <img
                       src={imagePreview}
@@ -214,7 +191,7 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
                 {isValidImage && imageSize && !isGoodAspectRatio() && (
                   <p className="text-sm text-amber-500 mt-1">
                     Atenção: A proporção da imagem ({(imageSize.width / imageSize.height).toFixed(1)}:1) não é ideal. 
-                    Recomendamos uma proporção entre 4:1 e 8:1 para melhor visualização.
+                    Recomendamos uma proporção de 16:5 para melhor visualização.
                   </p>
                 )}
                 {isValidImage && imageSize && (
@@ -268,9 +245,9 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
                   <SelectValue placeholder="Selecione a posição" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="top">Topo (proporção 5:1)</SelectItem>
-                  <SelectItem value="middle">Meio (proporção 6:1)</SelectItem>
-                  <SelectItem value="bottom">Rodapé (proporção 7:1)</SelectItem>
+                  <SelectItem value="top">Topo</SelectItem>
+                  <SelectItem value="middle">Meio</SelectItem>
+                  <SelectItem value="bottom">Rodapé</SelectItem>
                 </SelectContent>
               </Select>
             </div>
