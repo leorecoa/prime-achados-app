@@ -1,4 +1,4 @@
-import { Share2, UserPlus } from 'lucide-react';
+import { Share2, UserPlus, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -32,7 +32,7 @@ const Footer = () => {
           <p className="text-orange-100">Achou, clicou, levou.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div className="text-center">
             <h4 className="font-bold text-lg mb-4">Compartilhe</h4>
             <button 
@@ -42,6 +42,19 @@ const Footer = () => {
               <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
               <span>Compartilhar App</span>
             </button>
+          </div>
+
+          <div className="text-center">
+            <h4 className="font-bold text-lg mb-4">Siga-nos</h4>
+            <a 
+              href="https://www.instagram.com/bazarachadinhosprime/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full hover:bg-white/30 transition-all duration-300 flex items-center space-x-2 mx-auto group"
+            >
+              <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <span>@bazarachadinhosprime</span>
+            </a>
           </div>
 
           <div className="text-center">
