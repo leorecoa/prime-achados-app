@@ -103,9 +103,11 @@ const SplashScreen = () => {
             <div className="relative bg-white/10 backdrop-blur-md p-6 rounded-full border border-white/20 shadow-2xl">
               <div className="w-24 h-24 flex items-center justify-center">
                 <img 
-                  src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
+                  src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png?w=1080&h=720&fit=contain" 
                   alt="Prime Achados"
                   className="w-20 h-20 object-contain"
+                  width="1080"
+                  height="720"
                 />
               </div>
             </div>

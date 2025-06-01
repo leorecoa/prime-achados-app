@@ -43,7 +43,7 @@ const Header = ({ activeSection, onSectionChange }: HeaderProps) => {
     >
       {/* Background image with overlay */}
       <div className="absolute inset-0 bg-cover bg-center opacity-10" 
-           style={{backgroundImage: "url('/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png')"}}></div>
+           style={{backgroundImage: "url('/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png?w=1080&h=720&fit=contain')"}}></div>
       
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-orange-600/90 to-rose-500/90"></div>
@@ -54,9 +54,11 @@ const Header = ({ activeSection, onSectionChange }: HeaderProps) => {
             <div className="relative group">
               <div className="absolute -inset-1 bg-white/30 rounded-full blur-sm group-hover:bg-white/40 transition-colors"></div>
               <img 
-                src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
+                src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png?w=1080&h=720&fit=contain" 
                 alt="Achadinhos Prime"
                 className="w-10 h-10 object-contain relative z-10"
+                width="1080"
+                height="720"
               />
             </div>
             <div>

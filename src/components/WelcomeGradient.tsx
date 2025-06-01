@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag } from 'lucide-react';
 
 const WelcomeGradient = () => {
   const [visible, setVisible] = useState(true);
@@ -32,7 +31,13 @@ const WelcomeGradient = () => {
         transition={{ duration: 0.8 }}
       >
         <div className="bg-white/20 backdrop-blur-md p-5 rounded-full mb-4">
-          <ShoppingBag className="w-10 h-10 text-white" />
+          <img 
+            src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png?w=1080&h=720&fit=contain" 
+            alt="Prime Achados"
+            className="w-16 h-16 object-contain"
+            width="1080"
+            height="720"
+          />
         </div>
         
         <h1 className="text-4xl font-bold mb-2 text-white drop-shadow-lg">Bem-vindo</h1>
