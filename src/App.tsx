@@ -7,7 +7,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import AboutPage from "./components/AboutPage";
+import AboutPage from "./pages/AboutPage";
 import AdminAccessButton from "./components/AdminAccessButton";
 import AdminIndex from "./pages/admin/AdminIndex";
 import AdminDashboard from "./pages/admin/AdminDashboard";
