@@ -1,18 +1,69 @@
-import { useEffect, useState } from 'react';
-import { ShoppingBag, Star, Sparkles, TrendingUp, Gift } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { ShoppingBag, Sparkles, TrendingUp } from 'lucide-react';
 
 const SplashScreen = () => {
   const [progress, setProgress] = useState(0);
-  const [currentIcon, setCurrentIcon] = useState(0);
+  const particlesRef = useRef<HTMLDivElement>(null);
   
-  const icons = [
-    <ShoppingBag key="bag" className="w-8 h-8" />,
-    <Star key="star" className="w-8 h-8" />,
-    <Sparkles key="sparkles" className="w-8 h-8" />,
-    <TrendingUp key="trending" className="w-8 h-8" />,
-    <Gift key="gift" className="w-8 h-8" />
-  ];
+  // Efeito de partículas
+  useEffect(() => {
+    if (!particlesRef.current) return;
+    
+    const particles = particlesRef.current;
+    const createParticle = () => {
+      const particle = document.createElement('div');
+      particle.className = 'absolute rounded-full bg-white/30';
+      
+      // Tamanho aleatório
+      const size = Math.random() * 10 + 5;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      
+      // Posição aleatória
+      particle.style.left = `${Math.random() * 100}%`;
+      particle.style.top = `${Math.random() * 100}%`;
+      
+      // Animação
+      particle.animate(
+        [
+          { 
+            opacity: 0,
+            transform: 'translate(0, 0) scale(0)'
+          },
+          { 
+            opacity: 0.8,
+            transform: `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) scale(1)`
+          },
+          { 
+            opacity: 0,
+            transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) scale(0)`
+          }
+        ],
+        {
+          duration: Math.random() * 3000 + 2000,
+          easing: 'ease-out',
+          fill: 'forwards'
+        }
+      );
+      
+      particles.appendChild(particle);
+      
+      // Remover partícula após a animação
+      setTimeout(() => {
+        if (particles.contains(particle)) {
+          particles.removeChild(particle);
+        }
+      }, 5000);
+    };
+    
+    // Criar partículas periodicamente
+    const interval = setInterval(createParticle, 200);
+    
+    return () => clearInterval(interval);
+  }, []);
 
+  // Progresso da barra de carregamento
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress(prev => {
@@ -24,51 +75,136 @@ const SplashScreen = () => {
       });
     }, 50);
 
-    const iconInterval = setInterval(() => {
-      setCurrentIcon(prev => (prev + 1) % icons.length);
-    }, 800);
-
-    return () => {
-      clearInterval(interval);
-      clearInterval(iconInterval);
-    };
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-orange-400 z-50">
-      {/* Logo com efeito de brilho */}
-      <div className="relative mb-12 z-10">
-        <div className="absolute -inset-4 bg-white/20 rounded-full blur-xl opacity-60 animate-pulse"></div>
-        <div className="relative bg-gradient-to-r from-white to-orange-100 p-6 rounded-full shadow-2xl">
-          <div className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-700 to-orange-900">
-            Prime<span className="text-gray-900">Achados</span>
+    <div className="fixed inset-0 flex flex-col items-center justify-center z-50 overflow-hidden">
+      {/* Fundo com gradiente luxuoso */}
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-rose-500 to-purple-600"></div>
+      
+      {/* Efeito de partículas */}
+      <div ref={particlesRef} className="absolute inset-0 overflow-hidden"></div>
+      
+      {/* Conteúdo centralizado */}
+      <div className="relative z-10 flex flex-col items-center">
+        {/* Logo com animação */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="mb-8"
+        >
+          <div className="relative">
+            {/* Halo de luz */}
+            <div className="absolute -inset-6 bg-white/20 rounded-full blur-xl"></div>
+            
+            {/* Logo */}
+            <div className="relative bg-white/10 backdrop-blur-md p-6 rounded-full border border-white/20 shadow-2xl">
+              <div className="w-24 h-24 flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
+                  alt="Prime Achados"
+                  className="w-20 h-20 object-contain"
+                />
+              </div>
+            </div>
+            
+            {/* Efeito de brilho */}
+            <motion.div 
+              className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full blur-md"
+              animate={{ 
+                opacity: [0.5, 1, 0.5],
+                scale: [1, 1.2, 1]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            />
           </div>
-        </div>
-      </div>
-      
-      {/* Ícone animado */}
-      <div className="mb-8 text-white">
-        <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full">
-          {icons[currentIcon]}
-        </div>
-      </div>
-      
-      {/* Barra de progresso luxuosa */}
-      <div className="w-64 h-3 bg-white/20 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
-        <div 
-          className="h-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 transition-all duration-300 ease-out"
-          style={{ width: `${progress}%` }}
-        ></div>
-      </div>
-      
-      {/* Texto de carregamento */}
-      <p className="mt-6 text-white/90 font-light tracking-wider">
-        Descobrindo ofertas exclusivas...
-      </p>
-      
-      {/* Porcentagem de carregamento */}
-      <div className="mt-2 text-white/70 text-sm font-mono">
-        {progress}%
+        </motion.div>
+        
+        {/* Título com animação */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-lg flex items-center">
+            <Sparkles className="w-6 h-6 mr-2" />
+            Prime Achados
+            <Sparkles className="w-6 h-6 ml-2" />
+          </h1>
+          <p className="text-white/80 text-lg">Descubra ofertas exclusivas</p>
+        </motion.div>
+        
+        {/* Ícones animados */}
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="flex space-x-8 mb-10"
+        >
+          <motion.div 
+            className="bg-white/10 backdrop-blur-sm p-4 rounded-full"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+          >
+            <ShoppingBag className="w-8 h-8 text-white" />
+          </motion.div>
+          
+          <motion.div 
+            className="bg-white/10 backdrop-blur-sm p-4 rounded-full"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 2, delay: 0.3, repeat: Infinity, repeatType: "reverse" }}
+          >
+            <TrendingUp className="w-8 h-8 text-white" />
+          </motion.div>
+          
+          <motion.div 
+            className="bg-white/10 backdrop-blur-sm p-4 rounded-full"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 2, delay: 0.6, repeat: Infinity, repeatType: "reverse" }}
+          >
+            <Sparkles className="w-8 h-8 text-white" />
+          </motion.div>
+        </motion.div>
+        
+        {/* Barra de progresso luxuosa */}
+        <motion.div
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: "100%", opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.8 }}
+          className="w-64 relative"
+        >
+          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm">
+            <motion.div 
+              className="h-full bg-gradient-to-r from-yellow-300 via-orange-400 to-rose-500"
+              style={{ width: `${progress}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+          
+          {/* Efeito de brilho na barra */}
+          <motion.div 
+            className="absolute top-0 bottom-0 w-20 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            animate={{ left: ["-20%", "120%"] }}
+            transition={{ duration: 1.5, delay: 1, repeat: Infinity, repeatDelay: 1 }}
+          />
+        </motion.div>
+        
+        {/* Texto de carregamento */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1 }}
+          className="text-white/70 text-sm mt-4"
+        >
+          Carregando experiência premium...
+        </motion.p>
       </div>
     </div>
   );

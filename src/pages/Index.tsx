@@ -17,7 +17,7 @@ const Index = () => {
     const timer = setTimeout(() => {
       setLoading(false);
       setShowWelcome(true);
-    }, 3000);
+    }, 4000); // Aumentado para 4 segundos para mostrar a animação completa
 
     return () => clearTimeout(timer);
   }, []);
