@@ -88,24 +88,24 @@ const SplashScreen = () => {
       
       {/* Conteúdo centralizado */}
       <div className="relative z-10 flex flex-col items-center">
-        {/* Logo com animação */}
+        {/* Logo com animação - 60% maior */}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="mb-8"
+          className="mb-10"
         >
           <div className="relative">
-            {/* Halo de luz */}
-            <div className="absolute -inset-6 bg-white/20 rounded-full blur-xl"></div>
+            {/* Halo de luz ampliado */}
+            <div className="absolute -inset-10 bg-white/20 rounded-full blur-xl"></div>
             
-            {/* Logo */}
-            <div className="relative bg-white/10 backdrop-blur-md p-6 rounded-full border border-white/20 shadow-2xl">
-              <div className="w-24 h-24 flex items-center justify-center">
+            {/* Logo ampliada em 60% */}
+            <div className="relative bg-white/10 backdrop-blur-md p-8 rounded-full border border-white/20 shadow-2xl">
+              <div className="w-40 h-40 flex items-center justify-center">
                 <img 
                   src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png?w=1080&h=720&fit=contain" 
                   alt="Prime Achados"
-                  className="w-20 h-20 object-contain"
+                  className="w-32 h-32 object-contain drop-shadow-lg"
                   width="1080"
                   height="720"
                 />
@@ -114,7 +114,7 @@ const SplashScreen = () => {
             
             {/* Efeito de brilho */}
             <motion.div 
-              className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full blur-md"
+              className="absolute -top-4 -right-4 w-10 h-10 bg-white rounded-full blur-md"
               animate={{ 
                 opacity: [0.5, 1, 0.5],
                 scale: [1, 1.2, 1]
