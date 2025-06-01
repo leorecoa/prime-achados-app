@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '@/data/products';
-import axios from 'axios';
 
 interface AdminContextType {
   isAuthenticated: boolean;
@@ -20,11 +19,6 @@ const ADMIN_PASSWORD = '292404Leo'; // Senha fixa para demonstração
 const STORAGE_KEY_AUTH = 'admin_authenticated';
 const STORAGE_KEY_PRODUCTS = 'admin_products';
 const STORAGE_KEY_DAILY_DEAL = 'admin_daily_deal';
-
-// URL da API para sincronização
-const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://prime-achados-app.vercel.app/api' 
-  : 'http://localhost:3001/api';
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
@@ -115,35 +109,16 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       setIsSyncing(true);
       
-      // Atualizar os arquivos de dados locais
-      const dataToSync = {
-        products: products,
-        dailyDeal: dailyDeal
-      };
+      // Simular um tempo de processamento
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Em ambiente de desenvolvimento, apenas simular a sincronização
-      if (process.env.NODE_ENV !== 'production') {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        console.log('Dados sincronizados com sucesso (simulação):', dataToSync);
-        
-        // Atualizar os arquivos locais (simulação)
-        try {
-          // Em um ambiente real, isso seria feito pelo servidor
-          console.log('Arquivos atualizados com sucesso (simulação)');
-        } catch (error) {
-          console.error('Erro ao atualizar arquivos locais:', error);
-        }
-      } else {
-        // Em produção, enviar para a API
-        const response = await axios.post(`${API_URL}/update-data`, dataToSync, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-          }
-        });
-        
-        console.log('Resposta da API:', response.data);
+      // Salvar no localStorage (isso já é feito nas funções individuais, mas vamos garantir)
+      localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
+      if (dailyDeal) {
+        localStorage.setItem(STORAGE_KEY_DAILY_DEAL, JSON.stringify(dailyDeal));
       }
+      
+      console.log('Dados sincronizados com sucesso no localStorage');
       
       setIsSyncing(false);
       return true;

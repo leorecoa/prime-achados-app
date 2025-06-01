@@ -43,14 +43,18 @@ const AdminDashboard: React.FC = () => {
 
   const handleSync = async () => {
     setSyncError(null);
-    const success = await syncWithServer();
-    
-    if (success) {
-      toast({
-        title: 'Sincronização concluída',
-        description: 'Os produtos foram sincronizados com sucesso.',
-      });
-    } else {
+    try {
+      const success = await syncWithServer();
+      
+      if (success) {
+        toast({
+          title: 'Sincronização concluída',
+          description: 'Os produtos foram sincronizados com sucesso.',
+        });
+      } else {
+        throw new Error('Falha na sincronização');
+      }
+    } catch (error) {
       setSyncError('Erro ao sincronizar produtos. Tente novamente.');
       toast({
         title: 'Erro de sincronização',

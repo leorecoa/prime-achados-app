@@ -23,14 +23,18 @@ const AdminDailyDeal: React.FC = () => {
 
   const handleSync = async () => {
     setSyncError(null);
-    const success = await syncWithServer();
-    
-    if (success) {
-      toast({
-        title: 'Sincronização concluída',
-        description: 'O Achado do Dia foi sincronizado com sucesso.',
-      });
-    } else {
+    try {
+      const success = await syncWithServer();
+      
+      if (success) {
+        toast({
+          title: 'Sincronização concluída',
+          description: 'O Achado do Dia foi sincronizado com sucesso.',
+        });
+      } else {
+        throw new Error('Falha na sincronização');
+      }
+    } catch (error) {
       setSyncError('Erro ao sincronizar o Achado do Dia. Tente novamente.');
       toast({
         title: 'Erro de sincronização',
