@@ -13,6 +13,8 @@ interface AdminContextType {
   updateDailyDeal: (product: Product) => void;
   syncWithServer: () => Promise<boolean>;
   isSyncing: boolean;
+  exportData: () => void;
+  importData: (jsonData: string) => boolean;
 }
 
 const ADMIN_PASSWORD = '292404Leo'; // Senha fixa para demonstração
@@ -82,6 +84,9 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const updatedProducts = [...products, newProduct];
     setProducts(updatedProducts);
     localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(updatedProducts));
+    
+    // Disparar evento de storage para atualizar outras abas
+    window.dispatchEvent(new Event('storage'));
   };
 
   const updateProduct = (product: Product) => {
@@ -90,21 +95,30 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
     setProducts(updatedProducts);
     localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(updatedProducts));
+    
+    // Disparar evento de storage para atualizar outras abas
+    window.dispatchEvent(new Event('storage'));
   };
 
   const deleteProduct = (id: string) => {
     const updatedProducts = products.filter(p => p.id !== id);
     setProducts(updatedProducts);
     localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(updatedProducts));
+    
+    // Disparar evento de storage para atualizar outras abas
+    window.dispatchEvent(new Event('storage'));
   };
 
   // Gerenciamento do achado do dia
   const updateDailyDeal = (product: Product) => {
     setDailyDeal(product);
     localStorage.setItem(STORAGE_KEY_DAILY_DEAL, JSON.stringify(product));
+    
+    // Disparar evento de storage para atualizar outras abas
+    window.dispatchEvent(new Event('storage'));
   };
 
-  // Sincronização com o servidor
+  // Sincronização com o servidor (simulada com localStorage)
   const syncWithServer = async (): Promise<boolean> => {
     try {
       setIsSyncing(true);
@@ -118,6 +132,9 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         localStorage.setItem(STORAGE_KEY_DAILY_DEAL, JSON.stringify(dailyDeal));
       }
       
+      // Disparar evento de storage para atualizar outras abas
+      window.dispatchEvent(new Event('storage'));
+      
       console.log('Dados sincronizados com sucesso no localStorage');
       
       setIsSyncing(false);
@@ -125,6 +142,49 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch (error) {
       console.error('Erro ao sincronizar dados:', error);
       setIsSyncing(false);
+      return false;
+    }
+  };
+
+  // Exportar dados para backup
+  const exportData = () => {
+    const data = {
+      products,
+      dailyDeal
+    };
+    
+    const dataStr = JSON.stringify(data, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `prime-achados-backup-${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  // Importar dados de backup
+  const importData = (jsonData: string): boolean => {
+    try {
+      const data = JSON.parse(jsonData);
+      
+      if (data.products && Array.isArray(data.products)) {
+        setProducts(data.products);
+        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(data.products));
+      }
+      
+      if (data.dailyDeal) {
+        setDailyDeal(data.dailyDeal);
+        localStorage.setItem(STORAGE_KEY_DAILY_DEAL, JSON.stringify(data.dailyDeal));
+      }
+      
+      // Disparar evento de storage para atualizar outras abas
+      window.dispatchEvent(new Event('storage'));
+      
+      return true;
+    } catch (error) {
+      console.error('Erro ao importar dados:', error);
       return false;
     }
   };
@@ -140,7 +200,9 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     deleteProduct,
     updateDailyDeal,
     syncWithServer,
-    isSyncing
+    isSyncing,
+    exportData,
+    importData
   };
 
   return (

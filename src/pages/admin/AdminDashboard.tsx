@@ -5,15 +5,16 @@ import ProductForm from '@/components/admin/ProductForm';
 import { Product } from '@/data/products';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { AlertCircle, Save } from 'lucide-react';
+import { AlertCircle, Save, Download, Upload } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const AdminDashboard: React.FC = () => {
-  const { products, addProduct, updateProduct, deleteProduct, syncWithServer, isSyncing } = useAdmin();
+  const { products, addProduct, updateProduct, deleteProduct, syncWithServer, isSyncing, exportData, importData } = useAdmin();
   const { toast } = useToast();
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [fileInputRef] = useState(React.createRef<HTMLInputElement>());
 
   const handleAddProduct = (product: Omit<Product, 'id'>) => {
     addProduct(product);
@@ -64,15 +65,61 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleExport = () => {
+    exportData();
+    toast({
+      title: 'Exportação concluída',
+      description: 'Os dados foram exportados com sucesso.',
+    });
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      try {
+        const success = importData(content);
+        if (success) {
+          toast({
+            title: 'Importação concluída',
+            description: 'Os dados foram importados com sucesso.',
+          });
+        } else {
+          throw new Error('Falha na importação');
+        }
+      } catch (error) {
+        toast({
+          title: 'Erro de importação',
+          description: 'Não foi possível importar os dados. Verifique o formato do arquivo.',
+          variant: 'destructive',
+        });
+      }
+      
+      // Limpar o input para permitir selecionar o mesmo arquivo novamente
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h2 className="text-2xl font-bold">Gerenciar Produtos</h2>
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2">
           <Button 
             onClick={handleSync} 
             disabled={isSyncing}
             variant="outline"
+            size="sm"
           >
             {isSyncing ? 'Sincronizando...' : (
               <>
@@ -81,6 +128,32 @@ const AdminDashboard: React.FC = () => {
               </>
             )}
           </Button>
+          
+          <Button 
+            onClick={handleExport}
+            variant="outline"
+            size="sm"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Exportar
+          </Button>
+          
+          <Button 
+            onClick={handleImportClick}
+            variant="outline"
+            size="sm"
+          >
+            <Upload className="mr-2 h-4 w-4" />
+            Importar
+          </Button>
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleImportFile} 
+            accept=".json" 
+            className="hidden" 
+          />
+          
           {!isAddingProduct && !editingProduct && (
             <Button onClick={() => setIsAddingProduct(true)}>
               Adicionar Produto

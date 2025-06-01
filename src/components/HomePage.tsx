@@ -12,53 +12,84 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState<string[]>([]);
 
-  // Carregar produtos
-  useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        // Primeiro tenta carregar do localStorage
-        const storedProducts = localStorage.getItem('admin_products');
-        if (storedProducts) {
-          const parsedProducts = JSON.parse(storedProducts);
-          setProducts(parsedProducts);
-          
-          // Extrair categorias únicas
-          const uniqueCategories = Array.from(
-            new Set(parsedProducts.map((p: Product) => p.category).filter(Boolean))
-          ) as string[];
-          
-          setCategories(uniqueCategories);
-          setFilteredProducts(parsedProducts);
-        } else {
-          // Se não houver no localStorage, usa o fallback
-          setProducts(fallbackProducts);
-          
-          // Extrair categorias únicas do fallback
-          const uniqueCategories = Array.from(
-            new Set(fallbackProducts.map(p => p.category).filter(Boolean))
-          ) as string[];
-          
-          setCategories(uniqueCategories);
-          setFilteredProducts(fallbackProducts);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar produtos:', error);
-        setProducts(fallbackProducts);
-        setFilteredProducts(fallbackProducts);
+  // Função para recarregar produtos quando o localStorage mudar
+  const loadProducts = async () => {
+    try {
+      setIsLoading(true);
+      // Primeiro tenta carregar do localStorage
+      const storedProducts = localStorage.getItem('admin_products');
+      if (storedProducts) {
+        const parsedProducts = JSON.parse(storedProducts);
+        setProducts(parsedProducts);
         
-        // Extrair categorias únicas do fallback em caso de erro
+        // Extrair categorias únicas
+        const uniqueCategories = Array.from(
+          new Set(parsedProducts.map((p: Product) => p.category).filter(Boolean))
+        ) as string[];
+        
+        setCategories(uniqueCategories);
+        setFilteredProducts(parsedProducts);
+      } else {
+        // Se não houver no localStorage, usa o fallback
+        setProducts(fallbackProducts);
+        
+        // Extrair categorias únicas do fallback
         const uniqueCategories = Array.from(
           new Set(fallbackProducts.map(p => p.category).filter(Boolean))
         ) as string[];
         
         setCategories(uniqueCategories);
-      } finally {
-        setIsLoading(false);
+        setFilteredProducts(fallbackProducts);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar produtos:', error);
+      setProducts(fallbackProducts);
+      setFilteredProducts(fallbackProducts);
+      
+      // Extrair categorias únicas do fallback em caso de erro
+      const uniqueCategories = Array.from(
+        new Set(fallbackProducts.map(p => p.category).filter(Boolean))
+      ) as string[];
+      
+      setCategories(uniqueCategories);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Carregar produtos inicialmente
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  // Monitorar mudanças no localStorage
+  useEffect(() => {
+    // Função para lidar com mudanças no localStorage
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'admin_products' || e.key === 'admin_daily_deal') {
+        loadProducts();
       }
     };
 
-    loadProducts();
-  }, []);
+    // Adicionar listener para mudanças no localStorage
+    window.addEventListener('storage', handleStorageChange);
+
+    // Verificar mudanças a cada 5 segundos (fallback para mesma aba)
+    const interval = setInterval(() => {
+      const storedProducts = localStorage.getItem('admin_products');
+      if (storedProducts) {
+        const parsedProducts = JSON.parse(storedProducts);
+        if (JSON.stringify(parsedProducts) !== JSON.stringify(products)) {
+          loadProducts();
+        }
+      }
+    }, 5000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [products]);
 
   // Filtrar produtos por categoria
   useEffect(() => {
@@ -73,6 +104,10 @@ const HomePage = () => {
     setSelectedCategory(category);
   };
 
+  const handleRefresh = () => {
+    loadProducts();
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <section id="daily-deal" className="mb-12">
@@ -80,7 +115,15 @@ const HomePage = () => {
       </section>
 
       <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Produtos em Destaque</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Produtos em Destaque</h2>
+          <button 
+            onClick={handleRefresh}
+            className="text-sm bg-orange-100 hover:bg-orange-200 text-orange-800 px-3 py-1 rounded-full transition-colors"
+          >
+            Atualizar
+          </button>
+        </div>
         
         <CategoryFilter 
           categories={categories}

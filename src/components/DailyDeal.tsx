@@ -1,4 +1,4 @@
-import { Clock, ExternalLink, Sparkles } from 'lucide-react';
+import { Clock, ExternalLink, Sparkles, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Skeleton } from './ui/skeleton';
 import { dailyDeal as fallbackDeal } from '../data/dailyDeal';
@@ -13,29 +13,62 @@ const DailyDeal = () => {
   });
   const [isHovered, setIsHovered] = useState(false);
   const [isPulsing, setIsPulsing] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Carregar dados do achado do dia
-  useEffect(() => {
-    const loadDailyDeal = async () => {
-      try {
-        // Primeiro tenta carregar do localStorage
-        const storedDeal = localStorage.getItem('admin_daily_deal');
-        if (storedDeal) {
-          setDeal(JSON.parse(storedDeal));
-        } else {
-          // Se não houver no localStorage, usa o fallback
-          setDeal(fallbackDeal);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar achado do dia:', error);
+  // Função para carregar dados do achado do dia
+  const loadDailyDeal = async () => {
+    try {
+      setIsRefreshing(true);
+      // Primeiro tenta carregar do localStorage
+      const storedDeal = localStorage.getItem('admin_daily_deal');
+      if (storedDeal) {
+        setDeal(JSON.parse(storedDeal));
+      } else {
+        // Se não houver no localStorage, usa o fallback
         setDeal(fallbackDeal);
-      } finally {
-        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar achado do dia:', error);
+      setDeal(fallbackDeal);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
+
+  // Carregar dados inicialmente
+  useEffect(() => {
+    loadDailyDeal();
+  }, []);
+
+  // Monitorar mudanças no localStorage
+  useEffect(() => {
+    // Função para lidar com mudanças no localStorage
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'admin_daily_deal') {
+        loadDailyDeal();
       }
     };
 
-    loadDailyDeal();
-  }, []);
+    // Adicionar listener para mudanças no localStorage
+    window.addEventListener('storage', handleStorageChange);
+
+    // Verificar mudanças a cada 5 segundos (fallback para mesma aba)
+    const interval = setInterval(() => {
+      const storedDeal = localStorage.getItem('admin_daily_deal');
+      if (storedDeal) {
+        const parsedDeal = JSON.parse(storedDeal);
+        if (JSON.stringify(parsedDeal) !== JSON.stringify(deal)) {
+          loadDailyDeal();
+        }
+      }
+    }, 5000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [deal]);
 
   // Efeito de pulsação periódica
   useEffect(() => {
@@ -67,6 +100,11 @@ const DailyDeal = () => {
 
   const handleClick = () => {
     window.open(deal.affiliateLink, '_blank');
+  };
+
+  const handleRefresh = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    loadDailyDeal();
   };
 
   // Calcular desconto
@@ -121,6 +159,15 @@ const DailyDeal = () => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Botão de atualização */}
+      <button 
+        onClick={handleRefresh}
+        className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 p-2 rounded-full transition-colors z-10"
+        title="Atualizar oferta"
+      >
+        <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+      </button>
+
       {/* Efeito de brilho no canto */}
       <div className={`absolute -top-10 -right-10 w-20 h-20 bg-white/30 rounded-full blur-xl transition-opacity duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`}></div>
       
@@ -170,6 +217,9 @@ const DailyDeal = () => {
             src={deal.image}
             alt={deal.name}
             className={`w-20 h-20 rounded-xl object-cover transition-all duration-500 ${isHovered ? 'scale-110' : ''}`}
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = 'https://placehold.co/80x80?text=Erro';
+            }}
           />
           <div className="flex-1">
             <h3 className="font-bold text-lg mb-1">{deal.name}</h3>
