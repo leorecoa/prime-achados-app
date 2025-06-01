@@ -42,7 +42,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-orange-50 to-white">
       {showWelcome && <WelcomeGradient />}
       <Header activeSection={activeSection} onSectionChange={setActiveSection} />
       <main className="flex-grow">

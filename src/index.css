@@ -90,6 +90,23 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    position: relative;
+  }
+  
+  /* Background pattern */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png');
+    background-size: 200px;
+    background-repeat: repeat;
+    opacity: 0.03;
+    z-index: -1;
+    pointer-events: none;
   }
   
   /* Remover estilos de foco e outline */
