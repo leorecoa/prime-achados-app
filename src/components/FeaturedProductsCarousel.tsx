@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Product } from '@/data/products';
 import { ChevronLeft, ChevronRight, Star, TrendingUp } from 'lucide-react';
+import MobileImageOptimizer from './MobileImageOptimizer';
 
 interface FeaturedProductsCarouselProps {
   products: Product[];
@@ -136,16 +137,10 @@ const FeaturedProductsCarousel = ({ products, isLoading }: FeaturedProductsCarou
           >
             {/* Imagem de fundo com overlay gradiente */}
             <div className="absolute inset-0">
-              <img 
+              <MobileImageOptimizer 
                 src={`${product.image}?w=1200&h=675&fit=crop&format=webp`}
                 alt={product.name}
                 className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://placehold.co/1200x675?text=Imagem+Indisponível';
-                }}
-                width="1200"
-                height="675"
-                loading={index === 0 ? "eager" : "lazy"}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
             </div>

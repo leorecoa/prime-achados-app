@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ExternalLink, Share2, Star } from 'lucide-react';
 import { Product } from '@/data/products';
+import MobileImageOptimizer from './MobileImageOptimizer';
 
 interface ProductCardProps {
   product: Product;
@@ -63,16 +64,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
         
         {/* Imagem quadrada 1:1 */}
         <div className="aspect-square overflow-hidden">
-          <img 
+          <MobileImageOptimizer 
             src={`${product.image}?w=800&h=800&fit=crop&format=webp`}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = 'https://placehold.co/800x800?text=Imagem+Indisponível';
-            }}
-            width="800"
-            height="800"
-            loading="lazy"
           />
         </div>
         

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, ArrowRight } from 'lucide-react';
 import { Banner } from '@/contexts/AdminContext';
+import MobileImageOptimizer from './MobileImageOptimizer';
 
 interface PromotionalBannerProps {
   position: 'top' | 'middle' | 'bottom';
@@ -95,14 +96,10 @@ const PromotionalBanner = ({ position }: PromotionalBannerProps) => {
             </p>
           </div>
         ) : (
-          <img
+          <MobileImageOptimizer
             src={`${currentBanner.imageUrl}?w=1920&h=600&fit=crop&format=webp`}
             alt={currentBanner.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            onError={handleImageError}
-            loading="lazy"
-            width="1920"
-            height="600"
           />
         )}
         
