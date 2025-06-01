@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ExternalLink, Share2 } from 'lucide-react';
+import { ExternalLink, Share2, Star } from 'lucide-react';
 import { Product } from '@/data/products';
 
 interface ProductCardProps {
@@ -46,8 +46,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <div 
       className={`bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 
-        ${isHovered ? 'shadow-lg transform translate-y-[-5px]' : ''}
-        cursor-pointer relative`}
+        ${isHovered ? 'shadow-xl transform translate-y-[-5px]' : ''}
+        cursor-pointer relative group`}
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
@@ -58,21 +58,26 @@ const ProductCard = ({ product }: ProductCardProps) => {
       }}
     >
       <div className="relative">
+        {/* Efeito de brilho no canto */}
+        <div className={`absolute -top-20 -right-20 w-40 h-40 bg-orange-500/20 rounded-full blur-xl transition-opacity duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`}></div>
+        
         <img 
           src={product.image} 
           alt={product.name}
-          className="w-full h-48 object-cover transition-transform duration-500"
+          className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://placehold.co/400x300?text=Imagem+Indisponível';
           }}
         />
-        <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+        
+        {/* Etiqueta de desconto com efeito de vidro */}
+        <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-full">
           -{discount}%
         </div>
         
         <button 
           onClick={handleShare}
-          className="absolute top-2 left-2 bg-white/80 hover:bg-white p-1.5 rounded-full transition-colors"
+          className="absolute top-2 left-2 bg-white/80 hover:bg-white backdrop-blur-sm p-1.5 rounded-full transition-colors"
         >
           <Share2 className="w-4 h-4 text-gray-700" />
         </button>
@@ -93,6 +98,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </div>
       
       <div className="p-4">
+        {/* Avaliação com estrelas */}
+        <div className="flex items-center mb-2">
+          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+          <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+          <Star className="w-3 h-3 text-yellow-400/30" />
+          <span className="text-xs text-gray-500 ml-1">4.0</span>
+        </div>
+        
         <h3 className="font-medium text-gray-900 mb-1 line-clamp-2 h-12">{product.name}</h3>
         
         <div className="flex items-center justify-between mb-3">
@@ -106,15 +121,15 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
           
           {product.category && (
-            <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+            <span className="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded-full border border-orange-100">
               {product.category}
             </span>
           )}
         </div>
         
         <button 
-          className={`w-full bg-gradient-orange text-white text-sm font-medium py-2 px-4 rounded flex items-center justify-center space-x-1
-            transition-all duration-300 ${isHovered ? 'shadow-md' : ''}`}
+          className={`w-full bg-gradient-to-r from-orange-600 to-rose-500 text-white text-sm font-medium py-2 px-4 rounded-lg flex items-center justify-center space-x-1
+            transition-all duration-300 ${isHovered ? 'shadow-md shadow-orange-500/20' : ''}`}
         >
           <span>Ver Oferta</span>
           <ExternalLink className="w-4 h-4" />

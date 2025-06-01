@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import DailyDeal from './DailyDeal';
 import ProductCard from './ProductCard';
 import CategoryFilter from './CategoryFilter';
 import PromotionalBanner from './PromotionalBanner';
+import FeaturedProductsCarousel from './FeaturedProductsCarousel';
 import { Product } from '@/data/products';
 import { products as fallbackProducts } from '@/data/products';
 import { RefreshCw } from 'lucide-react';
@@ -72,7 +72,7 @@ const HomePage = () => {
   useEffect(() => {
     // Função para lidar com mudanças no localStorage
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'admin_products' || e.key === 'admin_daily_deal' || e.key === 'admin_banners') {
+      if (e.key === 'admin_products' || e.key === 'admin_banners') {
         loadProducts();
       }
     };
@@ -114,13 +114,23 @@ const HomePage = () => {
     loadProducts();
   };
 
+  // Selecionar produtos em destaque (os 5 com maior desconto)
+  const featuredProducts = [...products]
+    .sort((a, b) => {
+      const discountA = ((a.originalPrice - a.discountPrice) / a.originalPrice) * 100;
+      const discountB = ((b.originalPrice - b.discountPrice) / b.originalPrice) * 100;
+      return discountB - discountA;
+    })
+    .slice(0, 5);
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Banner superior */}
       <PromotionalBanner position="top" />
       
-      <section id="daily-deal" className="mb-12">
-        <DailyDeal />
+      {/* Carrossel de produtos em destaque */}
+      <section className="mb-12">
+        <FeaturedProductsCarousel products={featuredProducts} isLoading={isLoading} />
       </section>
 
       {/* Banner do meio */}
@@ -128,13 +138,18 @@ const HomePage = () => {
 
       <section className="mb-12">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Produtos em Destaque</h2>
+          <div>
+            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-600 to-rose-500">
+              Produtos em Destaque
+            </h2>
+            <div className="h-1 w-20 bg-gradient-to-r from-orange-600 to-rose-500 rounded-full mt-2"></div>
+          </div>
           <button 
             onClick={handleRefresh}
-            className="text-sm bg-orange-100 hover:bg-orange-200 text-orange-800 px-3 py-1 rounded-full transition-colors flex items-center"
+            className="text-sm bg-white shadow-md hover:shadow-lg border border-gray-100 text-gray-700 px-3 py-1.5 rounded-full transition-all flex items-center"
             disabled={isRefreshing}
           >
-            <RefreshCw className={`w-3 h-3 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3 h-3 mr-1.5 ${isRefreshing ? 'animate-spin' : ''}`} />
             Atualizar
           </button>
         </div>

@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import React from 'react';
 
 interface CategoryFilterProps {
   categories: string[];
@@ -8,33 +8,40 @@ interface CategoryFilterProps {
 
 const CategoryFilter = ({ categories, selectedCategory, onCategoryChange }: CategoryFilterProps) => {
   return (
-    <div className="flex flex-wrap gap-2 mb-6">
-      <button
-        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-          selectedCategory === null 
-            ? "bg-orange-500 text-white" 
-            : "bg-white text-gray-700 border border-gray-300"
-        }`}
-        onClick={() => onCategoryChange(null)}
-        type="button"
-      >
-        Todos
-      </button>
-      
-      {categories.map((category) => (
+    <div className="mb-8 overflow-x-auto pb-2">
+      <div className="flex space-x-2 min-w-max">
         <button
-          key={category}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-            selectedCategory === category 
-              ? "bg-orange-500 text-white" 
-              : "bg-white text-gray-700 border border-gray-300"
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+            selectedCategory === null 
+              ? "bg-gradient-to-r from-orange-600 to-rose-500 text-white shadow-md shadow-orange-500/20" 
+              : "bg-white text-gray-700 border border-gray-200 hover:border-orange-200 hover:bg-orange-50"
           }`}
-          onClick={() => onCategoryChange(category)}
+          onClick={() => onCategoryChange(null)}
           type="button"
         >
-          {category}
+          Todos
         </button>
-      ))}
+        
+        {categories.map((category) => (
+          <button
+            key={category}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              selectedCategory === category 
+                ? "bg-gradient-to-r from-orange-600 to-rose-500 text-white shadow-md shadow-orange-500/20" 
+                : "bg-white text-gray-700 border border-gray-200 hover:border-orange-200 hover:bg-orange-50"
+            }`}
+            onClick={() => onCategoryChange(category)}
+            type="button"
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+      
+      {/* Indicador de rolagem horizontal */}
+      <div className="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden hidden md:block">
+        <div className="h-full w-1/3 bg-gradient-to-r from-orange-600/30 to-rose-500/30 rounded-full"></div>
+      </div>
     </div>
   );
 };

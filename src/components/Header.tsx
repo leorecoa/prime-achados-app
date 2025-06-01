@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Menu, X } from 'lucide-react';
+import { Search, Menu, X, ShoppingBag } from 'lucide-react';
 
 interface HeaderProps {
   activeSection: string;
@@ -12,7 +12,6 @@ const Header = ({ activeSection, onSectionChange }: HeaderProps) => {
 
   const menuItems = [
     { id: 'home', label: 'Início' },
-    { id: 'daily-deal', label: 'Achado do Dia' },
     { id: 'about', label: 'Sobre' },
   ];
 
@@ -52,8 +51,8 @@ const Header = ({ activeSection, onSectionChange }: HeaderProps) => {
       <div className="container mx-auto px-4 relative">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4 z-10">
-            <div className="relative">
-              <div className="absolute -inset-1 bg-white/30 rounded-full blur-sm"></div>
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-white/30 rounded-full blur-sm group-hover:bg-white/40 transition-colors"></div>
               <img 
                 src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png" 
                 alt="Achadinhos Prime"
@@ -82,12 +81,27 @@ const Header = ({ activeSection, onSectionChange }: HeaderProps) => {
           </div>
 
           <div className="flex items-center space-x-4 z-10">
-            <button 
-              className="text-white hover:text-white/80 transition-colors border-0 bg-transparent"
-              type="button"
-            >
-              <Search className="w-5 h-5" />
-            </button>
+            <div className="relative">
+              <button 
+                className="text-white hover:text-white/80 transition-colors border-0 bg-transparent p-2"
+                type="button"
+              >
+                <Search className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="relative">
+              <button 
+                className="text-white hover:text-white/80 transition-colors border-0 bg-transparent p-2"
+                type="button"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                <span className="absolute -top-1 -right-1 bg-white text-orange-600 text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  0
+                </span>
+              </button>
+            </div>
+            
             <button 
               className="md:hidden text-white hover:text-white/80 transition-colors border-0 bg-transparent"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
