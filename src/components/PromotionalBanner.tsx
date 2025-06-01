@@ -80,27 +80,27 @@ const PromotionalBanner = ({ position }: PromotionalBannerProps) => {
     setIsImageError(true);
   };
 
-  // Ajustar altura do banner com base na posição
-  const getBannerHeight = () => {
+  // Definir proporção de aspecto para formato paisagem
+  const getAspectRatio = () => {
     switch (position) {
       case 'top':
-        return 'h-[180px] md:h-[220px]';
+        return 'aspect-[5/1]';
       case 'middle':
-        return 'h-[150px] md:h-[180px]';
+        return 'aspect-[6/1]';
       case 'bottom':
-        return 'h-[120px] md:h-[150px]';
+        return 'aspect-[7/1]';
       default:
-        return 'h-[150px] md:h-[180px]';
+        return 'aspect-[6/1]';
     }
   };
 
   return (
     <div 
-      className={`w-full rounded-lg overflow-hidden shadow-md mb-8 cursor-pointer relative group ${getBannerHeight()}`}
+      className={`w-full rounded-lg overflow-hidden shadow-md cursor-pointer relative group ${getAspectRatio()}`}
       onClick={handleBannerClick}
     >
       {/* Imagem do banner com fallback */}
-      <div className="relative w-full h-full overflow-hidden">
+      <div className="absolute inset-0 w-full h-full">
         {isImageError ? (
           <div className="w-full h-full bg-gradient-to-r from-orange-400 to-orange-600 flex items-center justify-center">
             <p className="text-white text-lg font-bold">
@@ -122,12 +122,12 @@ const PromotionalBanner = ({ position }: PromotionalBannerProps) => {
       </div>
       
       {/* Conteúdo do banner */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-        <h3 className="text-lg md:text-xl font-bold mb-0.5 drop-shadow-md">
+      <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 text-white">
+        <h3 className="text-base sm:text-lg md:text-xl font-bold mb-0.5 drop-shadow-md">
           {currentBanner.title}
         </h3>
         {currentBanner.description && (
-          <p className="text-xs md:text-sm text-white/90 mb-1 drop-shadow-md line-clamp-1">
+          <p className="text-xs sm:text-sm text-white/90 mb-1 drop-shadow-md line-clamp-1">
             {currentBanner.description}
           </p>
         )}
