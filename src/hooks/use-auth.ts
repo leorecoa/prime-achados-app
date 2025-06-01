@@ -1,66 +1,53 @@
+import { useMutation } from '@tanstack/react-query';
 
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+interface AuthCredentials {
+  email: string;
+  password: string;
+}
 
 export function useAuth() {
+  // Simulação de autenticação - em um caso real, isso se conectaria a um backend
   const signIn = useMutation({
-    mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      return data;
-    },
+    mutationFn: async (credentials: AuthCredentials) => {
+      // Simular uma chamada de API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Simular sucesso ou erro
+      if (credentials.email === 'teste@exemplo.com' && credentials.password === 'senha123') {
+        return { user: { id: '1', email: credentials.email } };
+      }
+      
+      throw new Error('Email ou senha incorretos');
+    }
   });
 
   const signUp = useMutation({
-    mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      if (error) throw error;
-      return data;
-    },
+    mutationFn: async (credentials: AuthCredentials) => {
+      // Simular uma chamada de API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Simular sucesso ou erro
+      if (credentials.email.includes('@')) {
+        return { user: { id: '2', email: credentials.email } };
+      }
+      
+      throw new Error('Email inválido');
+    }
   });
 
   const signInWithGoogle = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`
-        }
-      });
-      if (error) throw error;
-      return data;
-    },
+      // Simular uma chamada de API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Simular sucesso
+      return { user: { id: '3', email: 'google@exemplo.com' } };
+    }
   });
-
-  const signOut = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-    },
-  });
-
-  const { data: session } = useQuery({
-    queryKey: ['session'],
-    queryFn: async () => {
-      const { data } = await supabase.auth.getSession();
-      return data.session;
-    },
-  });
-
-  const isLoading = signIn.isPending || signUp.isPending || signInWithGoogle.isPending || signOut.isPending;
 
   return {
     signIn,
     signUp,
-    signInWithGoogle,
-    signOut,
-    session,
-    isLoading,
+    signInWithGoogle
   };
 }

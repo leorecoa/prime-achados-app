@@ -17,7 +17,7 @@ const AuthDialog = ({ children }: AuthDialogProps) => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { signIn, signUp, signInWithGoogle, isLoading } = useAuth();
+  const { signIn, signUp, signInWithGoogle } = useAuth();
   const { toast } = useToast();
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -87,9 +87,9 @@ const AuthDialog = ({ children }: AuthDialogProps) => {
             variant="outline" 
             className="w-full flex items-center justify-center gap-2"
             onClick={handleGoogleSignIn}
-            disabled={signInWithGoogle.isLoading}
+            disabled={signInWithGoogle.isPending}
           >
-            {signInWithGoogle.isLoading ? (
+            {signInWithGoogle.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" className="h-5 w-5">
@@ -147,9 +147,9 @@ const AuthDialog = ({ children }: AuthDialogProps) => {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading}
+                disabled={signIn.isPending}
               >
-                {isLoading ? (
+                {signIn.isPending ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   <LogIn className="mr-2 h-4 w-4" />
@@ -186,9 +186,9 @@ const AuthDialog = ({ children }: AuthDialogProps) => {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading}
+                disabled={signUp.isPending}
               >
-                {isLoading ? (
+                {signUp.isPending ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                   <UserPlus className="mr-2 h-4 w-4" />
