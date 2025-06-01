@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Image, Link, ExternalLink } from 'lucide-react';
+import { Image, Link, ExternalLink, AlertCircle } from 'lucide-react';
 
 interface BannerFormProps {
   banner?: Banner;
@@ -28,6 +28,7 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
   
   const [imagePreview, setImagePreview] = useState<string>('');
   const [isValidImage, setIsValidImage] = useState<boolean>(true);
+  const [imageSize, setImageSize] = useState<{width: number, height: number} | null>(null);
 
   useEffect(() => {
     if (banner) {
@@ -42,6 +43,7 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
     if (name === 'imageUrl') {
       setImagePreview(value);
       setIsValidImage(true);
+      setImageSize(null);
     }
     
     setFormData(prev => ({
@@ -66,10 +68,16 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
 
   const handleImageError = () => {
     setIsValidImage(false);
+    setImageSize(null);
   };
 
-  const handleImageLoad = () => {
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     setIsValidImage(true);
+    const img = e.target as HTMLImageElement;
+    setImageSize({
+      width: img.naturalWidth,
+      height: img.naturalHeight
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -84,6 +92,28 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
         setImagePreview(pastedText);
       }
     }
+  };
+
+  // Recomendações de tamanho com base na posição
+  const getRecommendedSize = () => {
+    switch (formData.position) {
+      case 'top':
+        return '1200x220 pixels';
+      case 'middle':
+        return '1200x180 pixels';
+      case 'bottom':
+        return '1200x150 pixels';
+      default:
+        return '1200x180 pixels';
+    }
+  };
+
+  // Verificar se a proporção da imagem é adequada
+  const isGoodAspectRatio = () => {
+    if (!imageSize) return true;
+    
+    const ratio = imageSize.width / imageSize.height;
+    return ratio >= 3 && ratio <= 8; // Proporção entre 3:1 e 8:1 é boa para banners
   };
 
   return (
@@ -140,6 +170,11 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
               )}
             </div>
             
+            <div className="text-xs text-gray-500 flex items-center">
+              <AlertCircle className="w-3 h-3 mr-1" />
+              Tamanho recomendado: {getRecommendedSize()} (proporção horizontal)
+            </div>
+            
             {imagePreview && (
               <div className="mt-2">
                 <p className="text-sm text-gray-500 mb-2">Pré-visualização:</p>
@@ -155,6 +190,17 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
                 {!isValidImage && (
                   <p className="text-sm text-red-500 mt-1">
                     URL de imagem inválida. Verifique o endereço.
+                  </p>
+                )}
+                {isValidImage && imageSize && !isGoodAspectRatio() && (
+                  <p className="text-sm text-amber-500 mt-1">
+                    Atenção: A proporção da imagem ({imageSize.width}x{imageSize.height}) não é ideal para banners. 
+                    Recomendamos uma imagem mais horizontal.
+                  </p>
+                )}
+                {isValidImage && imageSize && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Dimensões: {imageSize.width}x{imageSize.height} pixels
                   </p>
                 )}
               </div>
@@ -203,9 +249,9 @@ const BannerForm: React.FC<BannerFormProps> = ({ banner, onSubmit, onCancel }) =
                   <SelectValue placeholder="Selecione a posição" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="top">Topo</SelectItem>
-                  <SelectItem value="middle">Meio</SelectItem>
-                  <SelectItem value="bottom">Rodapé</SelectItem>
+                  <SelectItem value="top">Topo (220px altura)</SelectItem>
+                  <SelectItem value="middle">Meio (180px altura)</SelectItem>
+                  <SelectItem value="bottom">Rodapé (150px altura)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

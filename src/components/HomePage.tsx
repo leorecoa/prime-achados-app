@@ -126,17 +126,21 @@ const HomePage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Banner superior */}
-      <PromotionalBanner position="top" />
+      <div className="mb-8">
+        <PromotionalBanner position="top" />
+      </div>
       
       {/* Carrossel de produtos em destaque */}
-      <section className="mb-12">
+      <section className="mb-8">
         <FeaturedProductsCarousel products={featuredProducts} isLoading={isLoading} />
       </section>
 
       {/* Banner do meio */}
-      <PromotionalBanner position="middle" />
+      <div className="mb-8">
+        <PromotionalBanner position="middle" />
+      </div>
 
-      <section className="mb-12">
+      <section className="mb-8">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-600 to-rose-500">
@@ -182,7 +186,9 @@ const HomePage = () => {
       </section>
       
       {/* Banner inferior */}
-      <PromotionalBanner position="bottom" />
+      <div className="mb-8">
+        <PromotionalBanner position="bottom" />
+      </div>
     </div>
   );
 };

@@ -80,13 +80,27 @@ const PromotionalBanner = ({ position }: PromotionalBannerProps) => {
     setIsImageError(true);
   };
 
+  // Ajustar altura do banner com base na posição
+  const getBannerHeight = () => {
+    switch (position) {
+      case 'top':
+        return 'h-[180px] md:h-[220px]';
+      case 'middle':
+        return 'h-[150px] md:h-[180px]';
+      case 'bottom':
+        return 'h-[120px] md:h-[150px]';
+      default:
+        return 'h-[150px] md:h-[180px]';
+    }
+  };
+
   return (
     <div 
-      className="w-full rounded-lg overflow-hidden shadow-md mb-8 cursor-pointer relative group"
+      className={`w-full rounded-lg overflow-hidden shadow-md mb-8 cursor-pointer relative group ${getBannerHeight()}`}
       onClick={handleBannerClick}
     >
       {/* Imagem do banner com fallback */}
-      <div className="relative aspect-[21/9] md:aspect-[3/1] overflow-hidden">
+      <div className="relative w-full h-full overflow-hidden">
         {isImageError ? (
           <div className="w-full h-full bg-gradient-to-r from-orange-400 to-orange-600 flex items-center justify-center">
             <p className="text-white text-lg font-bold">
@@ -108,18 +122,18 @@ const PromotionalBanner = ({ position }: PromotionalBannerProps) => {
       </div>
       
       {/* Conteúdo do banner */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white">
-        <h3 className="text-xl md:text-2xl font-bold mb-1 drop-shadow-md">
+      <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+        <h3 className="text-lg md:text-xl font-bold mb-0.5 drop-shadow-md">
           {currentBanner.title}
         </h3>
         {currentBanner.description && (
-          <p className="text-sm md:text-base text-white/90 mb-2 drop-shadow-md line-clamp-2">
+          <p className="text-xs md:text-sm text-white/90 mb-1 drop-shadow-md line-clamp-1">
             {currentBanner.description}
           </p>
         )}
-        <div className="flex items-center text-sm font-medium text-white/80 group-hover:text-white transition-colors">
+        <div className="flex items-center text-xs font-medium text-white/80 group-hover:text-white transition-colors">
           <span>Ver mais</span>
-          <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
       
@@ -129,7 +143,7 @@ const PromotionalBanner = ({ position }: PromotionalBannerProps) => {
           {banners.map((_, index) => (
             <div 
               key={index}
-              className={`w-2 h-2 rounded-full ${
+              className={`w-1.5 h-1.5 rounded-full ${
                 index === currentBannerIndex ? 'bg-white' : 'bg-white/50'
               }`}
             ></div>
