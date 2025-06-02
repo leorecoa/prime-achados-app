@@ -58,25 +58,25 @@ const Footer = () => {
         <div className="flex flex-wrap justify-center items-center gap-6 mb-8">
           <h4 className="w-full text-center font-bold text-lg mb-2">Parceiros</h4>
           <div className="flex flex-wrap justify-center gap-6">
-            <a href="https://www.amazon.com.br" target="_blank" rel="noopener noreferrer" className="bg-white rounded-lg p-2 h-12 flex items-center justify-center transition-transform hover:scale-105">
+            <a href="https://www.amazon.com.br" target="_blank" rel="noopener noreferrer" className="bg-white rounded-lg p-2 h-12 w-32 flex items-center justify-center transition-transform hover:scale-105">
               <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" className="h-6" />
             </a>
             
-            <a href="https://www.shopee.com.br" target="_blank" rel="noopener noreferrer" className="bg-white rounded-lg p-2 h-12 flex items-center justify-center transition-transform hover:scale-105">
+            <a href="https://www.shopee.com.br" target="_blank" rel="noopener noreferrer" className="bg-white rounded-lg p-2 h-12 w-32 flex items-center justify-center transition-transform hover:scale-105">
               <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Shopee_logo.svg/2560px-Shopee_logo.svg.png" alt="Shopee" className="h-6" />
             </a>
             
-            <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-white font-medium">
+            <div className="bg-white rounded-lg p-2 h-12 w-32 flex items-center justify-center text-[#2D3277] font-bold">
               Mercado Livre
-            </span>
+            </div>
             
-            <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-white font-medium">
+            <div className="bg-white rounded-lg p-2 h-12 w-32 flex items-center justify-center text-[#0086FF] font-bold">
               Magalu
-            </span>
+            </div>
             
-            <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-white font-medium">
+            <div className="bg-white rounded-lg p-2 h-12 w-32 flex items-center justify-center text-[#E60014] font-bold">
               Americanas
-            </span>
+            </div>
           </div>
         </div>
 
