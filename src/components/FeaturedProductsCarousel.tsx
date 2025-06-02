@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Product } from '@/data/products';
-import { ChevronLeft, ChevronRight, Star, TrendingUp } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, TrendingUp, ShoppingBag } from 'lucide-react';
 import MobileImageOptimizer from './MobileImageOptimizer';
 
 interface FeaturedProductsCarouselProps {
@@ -75,9 +75,27 @@ const FeaturedProductsCarousel = ({ products, isLoading }: FeaturedProductsCarou
     return Math.round(((originalPrice - discountPrice) / originalPrice) * 100);
   };
 
+  // Formatar preço em BRL
+  const formatPrice = (price: number) => {
+    return price.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    });
+  };
+
   // Abrir link do produto
   const handleProductClick = (product: Product) => {
     window.open(product.affiliateLink, '_blank');
+  };
+
+  // Identificar marketplace
+  const getMarketplace = (url: string) => {
+    if (url.includes('amazon')) return 'Amazon';
+    if (url.includes('shopee')) return 'Shopee';
+    if (url.includes('mercadolivre')) return 'Mercado Livre';
+    if (url.includes('magazineluiza') || url.includes('magalu')) return 'Magalu';
+    if (url.includes('americanas')) return 'Americanas';
+    return 'Loja Online';
   };
 
   if (isLoading) {
@@ -160,14 +178,22 @@ const FeaturedProductsCarousel = ({ products, isLoading }: FeaturedProductsCarou
                       <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                       <Star className="w-4 h-4 text-yellow-400/50" />
                     </div>
+                    <span className="ml-2 text-xs bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                      {getMarketplace(product.affiliateLink)}
+                    </span>
                   </div>
                   <h3 className="text-2xl md:text-3xl font-bold mb-2 drop-shadow-md">{product.name}</h3>
                   <p className="text-white/80 line-clamp-2 max-w-2xl">{product.description}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
-                  <div className="text-sm text-white/70 line-through">R$ {product.originalPrice.toFixed(2)}</div>
-                  <div className="text-2xl md:text-3xl font-bold">R$ {product.discountPrice.toFixed(2)}</div>
-                  <button className="mt-2 bg-white text-orange-600 font-bold py-2 px-4 rounded-lg hover:bg-orange-50 transition-colors">
+                  <div className="text-sm text-white/70 line-through">
+                    {formatPrice(product.originalPrice)}
+                  </div>
+                  <div className="text-2xl md:text-3xl font-bold">
+                    {formatPrice(product.discountPrice)}
+                  </div>
+                  <button className="mt-2 bg-white text-orange-600 font-bold py-2 px-4 rounded-lg hover:bg-orange-50 transition-colors flex items-center justify-center">
+                    <ShoppingBag className="w-4 h-4 mr-2" />
                     Ver Oferta
                   </button>
                 </div>

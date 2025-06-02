@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ExternalLink, Share2, Star } from 'lucide-react';
+import { ExternalLink, Share2, Star, ShoppingBag } from 'lucide-react';
 import { Product } from '@/data/products';
 import MobileImageOptimizer from './MobileImageOptimizer';
 
@@ -21,7 +21,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     if (navigator.share) {
       navigator.share({
         title: product.name,
-        text: `Confira esta oferta incrível: ${product.name} por apenas R$${product.discountPrice.toFixed(2)}`,
+        text: `Confira esta oferta incrível: ${product.name} por apenas ${formatPrice(product.discountPrice)}`,
         url: product.affiliateLink,
       }).catch(err => {
         console.error('Erro ao compartilhar:', err);
@@ -43,6 +43,44 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const discount = Math.round(
     ((product.originalPrice - product.discountPrice) / product.originalPrice) * 100
   );
+
+  // Formatar preço em BRL
+  const formatPrice = (price: number) => {
+    return price.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    });
+  };
+
+  // Identificar marketplace
+  const getMarketplace = (url: string) => {
+    if (url.includes('amazon')) return 'Amazon';
+    if (url.includes('shopee')) return 'Shopee';
+    if (url.includes('mercadolivre')) return 'Mercado Livre';
+    if (url.includes('magazineluiza') || url.includes('magalu')) return 'Magalu';
+    if (url.includes('americanas')) return 'Americanas';
+    return 'Loja Online';
+  };
+
+  // Obter ícone do marketplace
+  const getMarketplaceIcon = () => {
+    const marketplace = getMarketplace(product.affiliateLink);
+    
+    switch (marketplace) {
+      case 'Amazon':
+        return <span className="text-xs font-semibold text-[#FF9900]">amazon</span>;
+      case 'Shopee':
+        return <span className="text-xs font-semibold text-[#EE4D2D]">shopee</span>;
+      case 'Mercado Livre':
+        return <span className="text-xs font-semibold text-[#FFE600] bg-[#2D3277] px-1 rounded">ML</span>;
+      case 'Magalu':
+        return <span className="text-xs font-semibold text-[#0086FF]">magalu</span>;
+      case 'Americanas':
+        return <span className="text-xs font-semibold text-[#E60014]">americanas</span>;
+      default:
+        return <span className="text-xs font-semibold text-gray-500">loja</span>;
+    }
+  };
 
   return (
     <div 
@@ -74,6 +112,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {/* Etiqueta de desconto com efeito de vidro */}
         <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-full">
           -{discount}%
+        </div>
+        
+        {/* Marketplace */}
+        <div className="absolute bottom-2 right-2 bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full">
+          {getMarketplaceIcon()}
         </div>
         
         <button 
@@ -114,10 +157,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <div className="flex items-center justify-between mb-3">
           <div>
             <div className="text-orange-600 font-bold">
-              R$ {product.discountPrice.toFixed(2)}
+              {formatPrice(product.discountPrice)}
             </div>
             <div className="text-gray-500 text-xs line-through">
-              R$ {product.originalPrice.toFixed(2)}
+              {formatPrice(product.originalPrice)}
             </div>
           </div>
           
@@ -132,8 +175,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
           className={`w-full bg-gradient-to-r from-orange-600 to-rose-500 text-white text-sm font-medium py-2 px-4 rounded-lg flex items-center justify-center space-x-1
             transition-all duration-300 ${isHovered ? 'shadow-md shadow-orange-500/20' : ''}`}
         >
+          <ShoppingBag className="w-4 h-4 mr-1" />
           <span>Ver Oferta</span>
-          <ExternalLink className="w-4 h-4" />
+          <ExternalLink className="w-4 h-4 ml-1" />
         </button>
       </div>
     </div>
