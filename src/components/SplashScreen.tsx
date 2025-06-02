@@ -99,8 +99,8 @@ const SplashScreen = () => {
             {/* Halo de luz ampliado */}
             <div className="absolute -inset-10 bg-white/20 rounded-full blur-xl"></div>
             
-            {/* Logo ampliada em 60% */}
-            <div className="relative bg-white/10 backdrop-blur-md p-8 rounded-full border border-white/20 shadow-2xl">
+            {/* Logo ampliada em 60% sem bordas */}
+            <div className="relative bg-transparent backdrop-blur-md p-8 rounded-full">
               <div className="w-40 h-40 flex items-center justify-center">
                 <img 
                   src="/lovable-uploads/29c76486-e58a-4151-8125-0a131064f4a8.png?w=1080&h=720&fit=contain" 
