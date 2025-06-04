@@ -1,82 +1,71 @@
-# Prime Achados App
+<p align="center">
+  <img src="/public/logo-with-text.png" alt="Prime Achados" width="400" />
+</p>
 
-Uma aplicação web para encontrar e compartilhar as melhores ofertas disponíveis na internet.
+<p align="center">
+  <img src="https://img.shields.io/badge/Versão-1.0.0-orange" alt="Versão" />
+  <img src="https://img.shields.io/badge/React-18-blue" alt="React" />
+  <img src="https://img.shields.io/badge/Tailwind-3-06B6D4" alt="Tailwind" />
+</p>
 
-## Tecnologias Utilizadas
+<p align="center">
+  <b>Achou, clicou, levou.</b><br>
+  Descubra as melhores ofertas online em um só lugar.
+</p>
 
-- **React**: Biblioteca JavaScript para construção de interfaces
-- **TypeScript**: Superset tipado de JavaScript
-- **Vite**: Build tool e dev server
-- **Tailwind CSS**: Framework CSS utilitário
-- **Shadcn/UI**: Componentes de UI reutilizáveis
-- **React Router**: Roteamento para aplicações React
-- **React Query**: Gerenciamento de estado e cache para dados assíncronos
-- **Supabase**: Backend as a Service (BaaS) para banco de dados
-- **Lucide React**: Biblioteca de ícones
+<p align="center">
+  <img src="/public/cover.png" alt="Prime Achados Cover" width="100%" />
+</p>
 
-## Funcionalidades
+## 📱 Sobre o Projeto
 
-- Visualização de produtos em destaque
-- Filtragem por categorias
-- Promoção diária com temporizador
-- Acesso direto a links de afiliados
-- Responsividade para dispositivos móveis e desktop
+Prime Achados é uma plataforma dedicada a encontrar e compartilhar as melhores ofertas disponíveis na internet, ajudando consumidores a economizar tempo e dinheiro. Reunimos em um só lugar os melhores produtos com os preços mais competitivos.
 
-## Estrutura do Projeto
+Nossa equipe de especialistas em compras monitora constantemente os principais e-commerces e lojas online em busca de descontos significativos, promoções relâmpago e ofertas exclusivas.
 
-```
-prime-achados-app/
-├── public/              # Arquivos estáticos
-├── src/
-│   ├── components/      # Componentes React
-│   │   ├── ui/          # Componentes de UI reutilizáveis
-│   ├── data/            # Dados estáticos e mocks
-│   ├── hooks/           # Hooks personalizados
-│   ├── integrations/    # Integrações com serviços externos
-│   │   └── supabase/    # Cliente e tipos do Supabase
-│   ├── lib/             # Funções utilitárias
-│   ├── pages/           # Componentes de página
-│   ├── App.tsx          # Componente principal
-│   └── main.tsx         # Ponto de entrada
-├── supabase/            # Configuração do Supabase
-└── ...                  # Arquivos de configuração
-```
+## ✨ Funcionalidades
 
-## Configuração do Banco de Dados
+- 🔍 Descubra ofertas exclusivas de diversos marketplaces
+- 💰 Visualize o percentual de desconto em cada produto
+- 🏷️ Filtre produtos por categoria
+- 📱 Interface responsiva para desktop e dispositivos móveis
+- 🌟 Carrossel de produtos em destaque
+- 📢 Banners promocionais personalizáveis
+- 📊 Painel administrativo para gerenciamento de produtos
 
-O projeto utiliza o Supabase como banco de dados. As tabelas principais são:
+## 🚀 Tecnologias
 
-- `products`: Armazena informações sobre os produtos
-- `daily_deals`: Armazena as promoções diárias
-- `categories`: Armazena as categorias disponíveis
+- **Frontend:** React, TypeScript, Tailwind CSS
+- **Animações:** Framer Motion
+- **Roteamento:** React Router
+- **Gerenciamento de Estado:** TanStack Query
+- **Estilização:** Tailwind CSS, shadcn/ui
+- **Build:** Vite
 
-## Como Executar
+## 🔗 Parceiros
 
-1. Clone o repositório
-2. Instale as dependências:
-   ```bash
-   npm install
-   ```
-3. Configure as variáveis de ambiente:
-   ```
-   VITE_SUPABASE_URL=sua_url_do_supabase
-   VITE_SUPABASE_ANON_KEY=sua_chave_anon_do_supabase
-   ```
-4. Execute o projeto em modo de desenvolvimento:
-   ```bash
-   npm run dev
-   ```
+<p align="center">
+  <a href="https://www.amazon.com.br" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" alt="Amazon" height="30" />
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="https://www.shopee.com.br" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Shopee_logo.svg/2560px-Shopee_logo.svg.png" alt="Shopee" height="30" />
+  </a>
+</p>
 
-## Melhorias Futuras
+<p align="center">
+  Mercado Livre • Magalu • Americanas
+</p>
 
-- Implementação de busca avançada
-- Sistema de notificações para novas ofertas
-- Página de detalhes do produto
-- Histórico de preços
-- Compartilhamento em redes sociais
-- Cupons de desconto
-- Área administrativa para gerenciamento de produtos
+## 📱 Siga-nos
 
-## Licença
+<p align="center">
+  <a href="https://www.instagram.com/bazarachadinhosprime/" target="_blank">
+    <img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram" />
+  </a>
+</p>
 
-Este projeto está licenciado sob a licença MIT.
+## 📝 Licença
+
+© 2023 Prime Achados. Todos os direitos reservados.
