@@ -3,7 +3,6 @@ import ProductCard from './ProductCard';
 import CategoryFilter from './CategoryFilter';
 import PromotionalBanner from './PromotionalBanner';
 import FeaturedProductsCarousel from './FeaturedProductsCarousel';
-import InstagramFeed from './InstagramFeed';
 import { Product } from '@/data/products';
 import { products as fallbackProducts } from '@/data/products';
 import { RefreshCw } from 'lucide-react';
@@ -185,9 +184,6 @@ const HomePage = () => {
           </div>
         )}
       </section>
-      
-      {/* Instagram Feed */}
-      <InstagramFeed />
       
       {/* Banner inferior */}
       <div className="mb-8">
