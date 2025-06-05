@@ -7,6 +7,15 @@ import { Product } from '@/data/products';
 import { products as fallbackProducts } from '@/data/products';
 import { RefreshCw } from 'lucide-react';
 
+// Mapeamento de categorias em inglês para português
+const categoryTranslations: Record<string, string> = {
+  'electronics': 'Eletrônicos',
+  'home': 'Casa',
+  'beauty': 'Beleza',
+  'kids': 'Infantil',
+  'accessories': 'Acessórios',
+};
+
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -25,27 +34,37 @@ const HomePage = () => {
         const parsedProducts = JSON.parse(storedProducts);
         setProducts(parsedProducts);
         
-        // Extrair categorias únicas
+        // Extrair categorias únicas e traduzir para português
         const uniqueCategories = Array.from(
           new Set(parsedProducts.map((p: Product) => p.category).filter(Boolean))
         ) as string[];
         
-        setCategories(uniqueCategories);
+        // Traduzir categorias e remover duplicatas
+        const translatedCategories = uniqueCategories
+          .map(category => categoryTranslations[category] || category)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        
+        setCategories(translatedCategories);
         
         // Manter a categoria selecionada se existir nos novos produtos
-        if (selectedCategory && !uniqueCategories.includes(selectedCategory)) {
+        if (selectedCategory && !translatedCategories.includes(selectedCategory)) {
           setSelectedCategory(null);
         }
       } else {
         // Se não houver no localStorage, usa o fallback
         setProducts(fallbackProducts);
         
-        // Extrair categorias únicas do fallback
+        // Extrair categorias únicas do fallback e traduzir
         const uniqueCategories = Array.from(
           new Set(fallbackProducts.map(p => p.category).filter(Boolean))
         ) as string[];
         
-        setCategories(uniqueCategories);
+        // Traduzir categorias e remover duplicatas
+        const translatedCategories = uniqueCategories
+          .map(category => categoryTranslations[category] || category)
+          .filter((value, index, self) => self.indexOf(value) === index);
+        
+        setCategories(translatedCategories);
       }
     } catch (error) {
       console.error('Erro ao carregar produtos:', error);
@@ -56,7 +75,12 @@ const HomePage = () => {
         new Set(fallbackProducts.map(p => p.category).filter(Boolean))
       ) as string[];
       
-      setCategories(uniqueCategories);
+      // Traduzir categorias e remover duplicatas
+      const translatedCategories = uniqueCategories
+        .map(category => categoryTranslations[category] || category)
+        .filter((value, index, self) => self.indexOf(value) === index);
+      
+      setCategories(translatedCategories);
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -100,7 +124,14 @@ const HomePage = () => {
   // Filtrar produtos por categoria
   useEffect(() => {
     if (selectedCategory) {
-      setFilteredProducts(products.filter(p => p.category === selectedCategory));
+      // Encontrar a categoria original correspondente à tradução
+      const originalCategory = Object.entries(categoryTranslations)
+        .find(([_, translated]) => translated === selectedCategory)?.[0] || selectedCategory;
+      
+      setFilteredProducts(products.filter(p => 
+        p.category === originalCategory || 
+        categoryTranslations[p.category] === selectedCategory
+      ));
     } else {
       setFilteredProducts(products);
     }

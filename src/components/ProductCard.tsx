@@ -7,6 +7,15 @@ interface ProductCardProps {
   product: Product;
 }
 
+// Mapeamento de categorias em inglês para português
+const categoryTranslations: Record<string, string> = {
+  'electronics': 'Eletrônicos',
+  'home': 'Casa',
+  'beauty': 'Beleza',
+  'kids': 'Infantil',
+  'accessories': 'Acessórios',
+};
+
 const ProductCard = ({ product }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
@@ -80,6 +89,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
       default:
         return <span className="text-xs font-semibold text-gray-500">loja</span>;
     }
+  };
+
+  // Traduzir categoria para português
+  const getTranslatedCategory = () => {
+    if (!product.category) return '';
+    return categoryTranslations[product.category] || product.category;
   };
 
   return (
@@ -166,7 +181,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           
           {product.category && (
             <span className="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded-full border border-orange-100">
-              {product.category}
+              {getTranslatedCategory()}
             </span>
           )}
         </div>
