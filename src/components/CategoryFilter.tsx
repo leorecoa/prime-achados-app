@@ -8,10 +8,10 @@ interface CategoryFilterProps {
 
 const CategoryFilter = ({ categories, selectedCategory, onCategoryChange }: CategoryFilterProps) => {
   return (
-    <div className="mb-8 overflow-x-auto pb-2">
+    <div className="mb-6 overflow-x-auto pb-2 -mx-4 px-4">
       <div className="flex space-x-2 min-w-max">
         <button
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
             selectedCategory === null 
               ? "bg-gradient-to-r from-orange-600 to-rose-500 text-white shadow-md shadow-orange-500/20" 
               : "bg-white text-gray-700 border border-gray-200 hover:border-orange-200 hover:bg-orange-50"
@@ -25,7 +25,7 @@ const CategoryFilter = ({ categories, selectedCategory, onCategoryChange }: Cate
         {categories.map((category) => (
           <button
             key={category}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
               selectedCategory === category 
                 ? "bg-gradient-to-r from-orange-600 to-rose-500 text-white shadow-md shadow-orange-500/20" 
                 : "bg-white text-gray-700 border border-gray-200 hover:border-orange-200 hover:bg-orange-50"

@@ -81,10 +81,23 @@ const PromotionalBanner = ({ position }: PromotionalBannerProps) => {
     setIsImageError(true);
   };
 
-  // Banner principal com proporção 16:5
+  // Definir proporção de aspecto para formato paisagem
+  // Ajustado para ser mais alto no topo e mais compacto nas outras posições
+  const getAspectRatio = () => {
+    switch (position) {
+      case 'top':
+        return 'aspect-[16/5]';
+      case 'middle':
+      case 'bottom':
+        return 'aspect-[16/6]';
+      default:
+        return 'aspect-[16/6]';
+    }
+  };
+
   return (
     <div 
-      className="w-full rounded-lg overflow-hidden shadow-md cursor-pointer relative group aspect-[16/5]"
+      className={`w-full rounded-lg overflow-hidden shadow-md cursor-pointer relative group ${getAspectRatio()} h-full`}
       onClick={handleBannerClick}
     >
       {/* Imagem do banner com fallback */}
@@ -108,8 +121,8 @@ const PromotionalBanner = ({ position }: PromotionalBannerProps) => {
       </div>
       
       {/* Conteúdo do banner */}
-      <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 text-white">
-        <h3 className="text-base sm:text-lg md:text-xl font-bold mb-0.5 drop-shadow-md">
+      <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 md:p-4 text-white">
+        <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-0.5 drop-shadow-md">
           {currentBanner.title}
         </h3>
         {currentBanner.description && (

@@ -135,9 +135,14 @@ const HomePage = () => {
         <FeaturedProductsCarousel products={featuredProducts} isLoading={isLoading} />
       </section>
 
-      {/* Banner do meio */}
-      <div className="mb-8">
-        <PromotionalBanner position="middle" />
+      {/* Banners reorganizados - Agora todos abaixo do carrossel */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="md:col-span-1">
+          <PromotionalBanner position="middle" />
+        </div>
+        <div className="md:col-span-1">
+          <PromotionalBanner position="bottom" />
+        </div>
       </div>
 
       <section className="mb-8">
@@ -165,13 +170,13 @@ const HomePage = () => {
         />
         
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mt-6">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
               <div key={i} className="bg-gray-100 rounded-xl h-80 animate-pulse"></div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mt-6">
             {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -184,11 +189,6 @@ const HomePage = () => {
           </div>
         )}
       </section>
-      
-      {/* Banner inferior */}
-      <div className="mb-8">
-        <PromotionalBanner position="bottom" />
-      </div>
     </div>
   );
 };

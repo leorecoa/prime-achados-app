@@ -123,6 +123,33 @@
   button {
     border: none;
   }
+  
+  /* Barra de rolagem invisível */
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+  
+  /* Firefox */
+  html {
+    scrollbar-width: none;
+  }
+  
+  /* Melhorias para mobile */
+  @media (max-width: 640px) {
+    .container {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+    
+    h1, h2, h3 {
+      word-break: break-word;
+    }
+  }
 }
 
 /* Remover estilos de acessibilidade */
