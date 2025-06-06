@@ -1,5 +1,4 @@
 import { Product } from '@/data/products';
-import { products as initialProducts } from '@/data/products';
 
 const STORAGE_KEY = 'admin_products';
 
@@ -14,12 +13,11 @@ export function getAllProducts(): Product[] {
       return JSON.parse(storedProducts);
     }
     
-    // Se não houver produtos no localStorage, use os produtos iniciais
-    saveProducts(initialProducts);
-    return initialProducts;
+    // Se não houver produtos no localStorage, retornar array vazio
+    return [];
   } catch (error) {
     console.error('Erro ao carregar produtos:', error);
-    return initialProducts;
+    return [];
   }
 }
 
@@ -74,4 +72,9 @@ export function deleteProduct(id: string): void {
   const updatedProducts = products.filter(p => p.id !== id);
   
   saveProducts(updatedProducts);
+}
+
+// Função para limpar todos os produtos
+export function clearProducts(): void {
+  saveProducts([]);
 }

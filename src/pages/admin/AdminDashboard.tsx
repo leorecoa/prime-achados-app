@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useAdmin } from '@/contexts/AdminContext';
+import React, { useState, useEffect, useRef } from 'react';
 import { Product } from '@/data/products';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,16 +6,20 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Edit, Trash2, Plus, Save } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AlertCircle, Edit, Trash2, Plus, Save, RefreshCw, Download, Upload, BarChart3 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { getAllProducts, saveProducts, addProduct as addProductToStorage, updateProduct as updateProductInStorage, deleteProduct as deleteProductFromStorage } from '@/utils/productStorage';
+import { getAllProducts, saveProducts, addProduct as addProductToStorage, updateProduct as updateProductInStorage, deleteProduct as deleteProductFromStorage, clearProducts } from '@/utils/productStorage';
+import ProductStats from '@/components/admin/ProductStats';
 
 const AdminDashboard: React.FC = () => {
-  const { products: contextProducts, addProduct, updateProduct, deleteProduct, syncWithServer } = useAdmin();
-  const [products, setProducts] = useState<Product[]>([]);
   const { toast } = useToast();
+  const [products, setProducts] = useState<Product[]>([]);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>('products');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<Omit<Product, 'id'>>({
     name: '',
     image: '',
@@ -29,9 +32,13 @@ const AdminDashboard: React.FC = () => {
 
   // Carregar produtos do storage ao iniciar
   useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = () => {
     const storedProducts = getAllProducts();
     setProducts(storedProducts);
-  }, []);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -52,9 +59,6 @@ const AdminDashboard: React.FC = () => {
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Adicionar ao contexto
-    addProduct(formData);
-    
     // Adicionar diretamente ao storage
     const newProduct = addProductToStorage(formData);
     
@@ -73,9 +77,6 @@ const AdminDashboard: React.FC = () => {
     });
     setIsAddingProduct(false);
     
-    // Forçar sincronização
-    await syncWithServer();
-    
     toast({
       title: 'Produto adicionado',
       description: 'O produto foi adicionado com sucesso.',
@@ -90,9 +91,6 @@ const AdminDashboard: React.FC = () => {
         id: editingProduct.id
       };
       
-      // Atualizar no contexto
-      updateProduct(updatedProduct);
-      
       // Atualizar diretamente no storage
       updateProductInStorage(updatedProduct);
       
@@ -100,9 +98,6 @@ const AdminDashboard: React.FC = () => {
       setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
       
       setEditingProduct(null);
-      
-      // Forçar sincronização
-      await syncWithServer();
       
       toast({
         title: 'Produto atualizado',
@@ -113,17 +108,11 @@ const AdminDashboard: React.FC = () => {
 
   const handleDeleteProduct = async (id: string) => {
     if (window.confirm('Tem certeza que deseja excluir este produto?')) {
-      // Excluir do contexto
-      deleteProduct(id);
-      
       // Excluir diretamente do storage
       deleteProductFromStorage(id);
       
       // Atualizar estado local
       setProducts(prev => prev.filter(p => p.id !== id));
-      
-      // Forçar sincronização
-      await syncWithServer();
       
       toast({
         title: 'Produto excluído',
@@ -145,23 +134,108 @@ const AdminDashboard: React.FC = () => {
     });
   };
 
-  const handleSyncProducts = async () => {
+  const handleSyncProducts = () => {
     // Salvar produtos atuais diretamente no storage
     saveProducts(products);
     
-    const success = await syncWithServer();
-    
-    if (success) {
+    toast({
+      title: 'Sincronização concluída',
+      description: 'Todos os produtos foram sincronizados com sucesso.',
+    });
+  };
+
+  const handleClearProducts = () => {
+    if (window.confirm('Tem certeza que deseja limpar todos os produtos? Esta ação não pode ser desfeita.')) {
+      clearProducts();
+      setProducts([]);
+      
       toast({
-        title: 'Sincronização concluída',
-        description: 'Todos os produtos foram sincronizados com sucesso.',
+        title: 'Produtos limpos',
+        description: 'Todos os produtos foram removidos com sucesso.',
       });
-    } else {
+    }
+  };
+
+  const handleRefresh = () => {
+    setIsLoading(true);
+    loadProducts();
+    setIsLoading(false);
+    
+    toast({
+      title: 'Produtos atualizados',
+      description: 'A lista de produtos foi atualizada.',
+    });
+  };
+
+  // Exportar produtos para um arquivo JSON
+  const handleExportProducts = () => {
+    try {
+      const dataStr = JSON.stringify(products, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = `prime-achados-produtos-${new Date().toISOString().split('T')[0]}.json`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+      
       toast({
-        title: 'Erro na sincronização',
-        description: 'Ocorreu um erro ao sincronizar os produtos.',
+        title: 'Exportação concluída',
+        description: 'Os produtos foram exportados com sucesso.',
+      });
+    } catch (error) {
+      console.error('Erro ao exportar produtos:', error);
+      toast({
+        title: 'Erro na exportação',
+        description: 'Ocorreu um erro ao exportar os produtos.',
         variant: 'destructive',
       });
+    }
+  };
+
+  // Importar produtos de um arquivo JSON
+  const handleImportProducts = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const importedProducts = JSON.parse(event.target?.result as string);
+        
+        if (Array.isArray(importedProducts)) {
+          saveProducts(importedProducts);
+          setProducts(importedProducts);
+          
+          toast({
+            title: 'Importação concluída',
+            description: `${importedProducts.length} produtos foram importados com sucesso.`,
+          });
+        } else {
+          throw new Error('Formato inválido');
+        }
+      } catch (error) {
+        console.error('Erro ao importar produtos:', error);
+        toast({
+          title: 'Erro na importação',
+          description: 'O arquivo selecionado não é um JSON válido de produtos.',
+          variant: 'destructive',
+        });
+      }
+    };
+    
+    reader.readAsText(file);
+    
+    // Limpar o input para permitir selecionar o mesmo arquivo novamente
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -269,103 +343,139 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap gap-2">
         <h2 className="text-2xl font-bold">Gerenciar Produtos</h2>
-        <div className="flex space-x-2">
-          <Button onClick={handleSyncProducts} variant="outline">
-            <Save className="mr-2 h-4 w-4" />
-            Sincronizar
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={handleRefresh} variant="outline" disabled={isLoading}>
+            <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            Atualizar
           </Button>
-          {!isAddingProduct && !editingProduct && (
+          
+          <Button onClick={handleExportProducts} variant="outline">
+            <Download className="mr-2 h-4 w-4" />
+            Exportar
+          </Button>
+          
+          <Button onClick={handleImportProducts} variant="outline">
+            <Upload className="mr-2 h-4 w-4" />
+            Importar
+          </Button>
+          
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            accept=".json" 
+            style={{ display: 'none' }} 
+          />
+          
+          <Button onClick={handleClearProducts} variant="destructive">
+            Limpar
+          </Button>
+          
+          {!isAddingProduct && !editingProduct && activeTab === 'products' && (
             <Button onClick={() => setIsAddingProduct(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Adicionar Produto
+              Adicionar
             </Button>
           )}
         </div>
       </div>
 
-      {isAddingProduct && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Adicionar Novo Produto</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {renderForm()}
-          </CardContent>
-        </Card>
-      )}
+      <Tabs defaultValue="products" value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="products">Produtos</TabsTrigger>
+          <TabsTrigger value="stats">Estatísticas</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="products">
+          {isAddingProduct && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Adicionar Novo Produto</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {renderForm()}
+              </CardContent>
+            </Card>
+          )}
 
-      {editingProduct && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Editar Produto</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {renderForm()}
-          </CardContent>
-        </Card>
-      )}
+          {editingProduct && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Editar Produto</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {renderForm()}
+              </CardContent>
+            </Card>
+          )}
 
-      {!isAddingProduct && !editingProduct && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {products.length > 0 ? (
-            products.map((product) => (
-              <Card key={product.id}>
-                <div className="aspect-video w-full overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://placehold.co/600x400?text=Imagem+Indisponível';
-                    }}
-                  />
+          {!isAddingProduct && !editingProduct && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {products.length > 0 ? (
+                products.map((product) => (
+                  <Card key={product.id}>
+                    <div className="aspect-video w-full overflow-hidden">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://placehold.co/600x400?text=Imagem+Indisponível';
+                        }}
+                      />
+                    </div>
+                    <CardContent className="p-4">
+                      <h3 className="font-bold mb-2 line-clamp-1">{product.name}</h3>
+                      <div className="flex justify-between mb-2">
+                        <div className="text-sm text-gray-500">Preço Original:</div>
+                        <div className="font-medium">R$ {product.originalPrice.toFixed(2)}</div>
+                      </div>
+                      <div className="flex justify-between mb-4">
+                        <div className="text-sm text-gray-500">Preço com Desconto:</div>
+                        <div className="font-medium text-green-600">R$ {product.discountPrice.toFixed(2)}</div>
+                      </div>
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditProduct(product)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" />
+                          Editar
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeleteProduct(product.id)}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Excluir
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-full">
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Nenhum produto encontrado</AlertTitle>
+                    <AlertDescription>
+                      Clique em "Adicionar Produto" para criar seu primeiro produto ou "Importar" para carregar produtos de um arquivo.
+                    </AlertDescription>
+                  </Alert>
                 </div>
-                <CardContent className="p-4">
-                  <h3 className="font-bold mb-2 line-clamp-1">{product.name}</h3>
-                  <div className="flex justify-between mb-2">
-                    <div className="text-sm text-gray-500">Preço Original:</div>
-                    <div className="font-medium">R$ {product.originalPrice.toFixed(2)}</div>
-                  </div>
-                  <div className="flex justify-between mb-4">
-                    <div className="text-sm text-gray-500">Preço com Desconto:</div>
-                    <div className="font-medium text-green-600">R$ {product.discountPrice.toFixed(2)}</div>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEditProduct(product)}
-                    >
-                      <Edit className="h-4 w-4 mr-1" />
-                      Editar
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteProduct(product.id)}
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Excluir
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : (
-            <div className="col-span-full">
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Nenhum produto encontrado</AlertTitle>
-                <AlertDescription>
-                  Clique em "Adicionar Produto" para criar seu primeiro produto.
-                </AlertDescription>
-              </Alert>
+              )}
             </div>
           )}
-        </div>
-      )}
+        </TabsContent>
+        
+        <TabsContent value="stats">
+          <ProductStats products={products} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
