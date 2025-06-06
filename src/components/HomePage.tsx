@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ProductCard from './ProductCard';
 import CategoryFilter from './CategoryFilter';
 import PromotionalBanner from './PromotionalBanner';
@@ -27,12 +27,15 @@ const HomePage = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Função para recarregar produtos quando o localStorage mudar
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setIsRefreshing(true);
+      console.log("Carregando produtos...");
+      
       // Primeiro tenta carregar do localStorage
       const storedProducts = localStorage.getItem(STORAGE_KEY_PRODUCTS);
       if (storedProducts) {
+        console.log("Produtos encontrados no localStorage");
         const parsedProducts = JSON.parse(storedProducts);
         setProducts(parsedProducts);
         
@@ -53,6 +56,7 @@ const HomePage = () => {
           setSelectedCategory(null);
         }
       } else {
+        console.log("Nenhum produto encontrado no localStorage, usando fallback");
         // Se não houver no localStorage, usa o fallback
         setProducts(fallbackProducts);
         localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(fallbackProducts));
@@ -88,30 +92,48 @@ const HomePage = () => {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  };
+  }, [selectedCategory]);
 
   // Carregar produtos inicialmente
   useEffect(() => {
     loadProducts();
-  }, []);
-
-  // Monitorar mudanças no localStorage
-  useEffect(() => {
-    // Função para lidar com mudanças no localStorage
+    
+    // Adicionar um listener de evento personalizado para recarregar produtos
+    const handleReloadProducts = () => {
+      console.log("Evento de recarga de produtos recebido");
+      loadProducts();
+    };
+    
+    window.addEventListener('reloadProducts', handleReloadProducts);
+    
+    // Monitorar mudanças no localStorage
     const handleStorageChange = (e: StorageEvent) => {
+      console.log("Storage change event:", e.key);
       if (e.key === STORAGE_KEY_PRODUCTS || e.key === 'admin_banners' || e.key === 'admin_daily_deal') {
-        console.log('Storage change detected:', e.key);
         loadProducts();
       }
     };
-
-    // Adicionar listener para mudanças no localStorage
+    
     window.addEventListener('storage', handleStorageChange);
-
+    
+    // Verificar a cada 3 segundos se há mudanças no localStorage
+    const checkInterval = setInterval(() => {
+      const storedProducts = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+      if (storedProducts) {
+        const parsedProducts = JSON.parse(storedProducts);
+        if (JSON.stringify(parsedProducts) !== JSON.stringify(products)) {
+          console.log("Mudança detectada no intervalo de verificação");
+          loadProducts();
+        }
+      }
+    }, 3000);
+    
     return () => {
+      window.removeEventListener('reloadProducts', handleReloadProducts);
       window.removeEventListener('storage', handleStorageChange);
+      clearInterval(checkInterval);
     };
-  }, []);
+  }, [loadProducts, products]);
 
   // Filtrar produtos por categoria
   useEffect(() => {
