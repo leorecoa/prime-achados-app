@@ -134,7 +134,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(updatedProducts));
     
     // Disparar evento de storage para atualizar outras abas
-    window.dispatchEvent(new Event('storage'));
+    const event = new StorageEvent('storage', {
+      key: STORAGE_KEY_PRODUCTS,
+      newValue: JSON.stringify(updatedProducts)
+    });
+    window.dispatchEvent(event);
   };
 
   const updateProduct = (product: Product) => {
@@ -145,7 +149,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(updatedProducts));
     
     // Disparar evento de storage para atualizar outras abas
-    window.dispatchEvent(new Event('storage'));
+    const event = new StorageEvent('storage', {
+      key: STORAGE_KEY_PRODUCTS,
+      newValue: JSON.stringify(updatedProducts)
+    });
+    window.dispatchEvent(event);
   };
 
   const deleteProduct = (id: string) => {
@@ -154,7 +162,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(updatedProducts));
     
     // Disparar evento de storage para atualizar outras abas
-    window.dispatchEvent(new Event('storage'));
+    const event = new StorageEvent('storage', {
+      key: STORAGE_KEY_PRODUCTS,
+      newValue: JSON.stringify(updatedProducts)
+    });
+    window.dispatchEvent(event);
   };
 
   // Gerenciamento do achado do dia
@@ -163,7 +175,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEY_DAILY_DEAL, JSON.stringify(product));
     
     // Disparar evento de storage para atualizar outras abas
-    window.dispatchEvent(new Event('storage'));
+    const event = new StorageEvent('storage', {
+      key: STORAGE_KEY_DAILY_DEAL,
+      newValue: JSON.stringify(product)
+    });
+    window.dispatchEvent(event);
   };
 
   // Gerenciamento de banners
@@ -177,7 +193,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEY_BANNERS, JSON.stringify(updatedBanners));
     
     // Disparar evento de storage para atualizar outras abas
-    window.dispatchEvent(new Event('storage'));
+    const event = new StorageEvent('storage', {
+      key: STORAGE_KEY_BANNERS,
+      newValue: JSON.stringify(updatedBanners)
+    });
+    window.dispatchEvent(event);
   };
 
   const updateBanner = (banner: Banner) => {
@@ -188,7 +208,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEY_BANNERS, JSON.stringify(updatedBanners));
     
     // Disparar evento de storage para atualizar outras abas
-    window.dispatchEvent(new Event('storage'));
+    const event = new StorageEvent('storage', {
+      key: STORAGE_KEY_BANNERS,
+      newValue: JSON.stringify(updatedBanners)
+    });
+    window.dispatchEvent(event);
   };
 
   const deleteBanner = (id: string) => {
@@ -197,7 +221,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEY_BANNERS, JSON.stringify(updatedBanners));
     
     // Disparar evento de storage para atualizar outras abas
-    window.dispatchEvent(new Event('storage'));
+    const event = new StorageEvent('storage', {
+      key: STORAGE_KEY_BANNERS,
+      newValue: JSON.stringify(updatedBanners)
+    });
+    window.dispatchEvent(event);
   };
 
   // Sincronização com o servidor (simulada com localStorage)
@@ -216,8 +244,26 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         localStorage.setItem(STORAGE_KEY_DAILY_DEAL, JSON.stringify(dailyDeal));
       }
       
-      // Disparar evento de storage para atualizar outras abas
-      window.dispatchEvent(new Event('storage'));
+      // Disparar eventos de storage para atualizar outras abas
+      const productsEvent = new StorageEvent('storage', {
+        key: STORAGE_KEY_PRODUCTS,
+        newValue: JSON.stringify(products)
+      });
+      window.dispatchEvent(productsEvent);
+      
+      const bannersEvent = new StorageEvent('storage', {
+        key: STORAGE_KEY_BANNERS,
+        newValue: JSON.stringify(banners)
+      });
+      window.dispatchEvent(bannersEvent);
+      
+      if (dailyDeal) {
+        const dailyDealEvent = new StorageEvent('storage', {
+          key: STORAGE_KEY_DAILY_DEAL,
+          newValue: JSON.stringify(dailyDeal)
+        });
+        window.dispatchEvent(dailyDealEvent);
+      }
       
       console.log('Dados sincronizados com sucesso no localStorage');
       
@@ -257,20 +303,38 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (data.products && Array.isArray(data.products)) {
         setProducts(data.products);
         localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(data.products));
+        
+        // Disparar evento de storage para atualizar outras abas
+        const productsEvent = new StorageEvent('storage', {
+          key: STORAGE_KEY_PRODUCTS,
+          newValue: JSON.stringify(data.products)
+        });
+        window.dispatchEvent(productsEvent);
       }
       
       if (data.dailyDeal) {
         setDailyDeal(data.dailyDeal);
         localStorage.setItem(STORAGE_KEY_DAILY_DEAL, JSON.stringify(data.dailyDeal));
+        
+        // Disparar evento de storage para atualizar outras abas
+        const dailyDealEvent = new StorageEvent('storage', {
+          key: STORAGE_KEY_DAILY_DEAL,
+          newValue: JSON.stringify(data.dailyDeal)
+        });
+        window.dispatchEvent(dailyDealEvent);
       }
 
       if (data.banners && Array.isArray(data.banners)) {
         setBanners(data.banners);
         localStorage.setItem(STORAGE_KEY_BANNERS, JSON.stringify(data.banners));
+        
+        // Disparar evento de storage para atualizar outras abas
+        const bannersEvent = new StorageEvent('storage', {
+          key: STORAGE_KEY_BANNERS,
+          newValue: JSON.stringify(data.banners)
+        });
+        window.dispatchEvent(bannersEvent);
       }
-      
-      // Disparar evento de storage para atualizar outras abas
-      window.dispatchEvent(new Event('storage'));
       
       return true;
     } catch (error) {

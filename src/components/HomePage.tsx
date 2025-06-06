@@ -16,6 +16,8 @@ const categoryTranslations: Record<string, string> = {
   'accessories': 'Acessórios',
 };
 
+const STORAGE_KEY_PRODUCTS = 'admin_products';
+
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -29,7 +31,7 @@ const HomePage = () => {
     try {
       setIsRefreshing(true);
       // Primeiro tenta carregar do localStorage
-      const storedProducts = localStorage.getItem('admin_products');
+      const storedProducts = localStorage.getItem(STORAGE_KEY_PRODUCTS);
       if (storedProducts) {
         const parsedProducts = JSON.parse(storedProducts);
         setProducts(parsedProducts);
@@ -53,6 +55,7 @@ const HomePage = () => {
       } else {
         // Se não houver no localStorage, usa o fallback
         setProducts(fallbackProducts);
+        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(fallbackProducts));
         
         // Extrair categorias únicas do fallback e traduzir
         const uniqueCategories = Array.from(
@@ -96,7 +99,8 @@ const HomePage = () => {
   useEffect(() => {
     // Função para lidar com mudanças no localStorage
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'admin_products' || e.key === 'admin_banners') {
+      if (e.key === STORAGE_KEY_PRODUCTS || e.key === 'admin_banners' || e.key === 'admin_daily_deal') {
+        console.log('Storage change detected:', e.key);
         loadProducts();
       }
     };
@@ -104,22 +108,10 @@ const HomePage = () => {
     // Adicionar listener para mudanças no localStorage
     window.addEventListener('storage', handleStorageChange);
 
-    // Verificar mudanças a cada 5 segundos (fallback para mesma aba)
-    const interval = setInterval(() => {
-      const storedProducts = localStorage.getItem('admin_products');
-      if (storedProducts) {
-        const parsedProducts = JSON.parse(storedProducts);
-        if (JSON.stringify(parsedProducts) !== JSON.stringify(products)) {
-          loadProducts();
-        }
-      }
-    }, 5000);
-
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
     };
-  }, [products]);
+  }, []);
 
   // Filtrar produtos por categoria
   useEffect(() => {
