@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAdmin } from '@/contexts/AdminContext';
 import { Product } from '@/data/products';
 import { Button } from '@/components/ui/button';
@@ -9,9 +9,11 @@ import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle, Edit, Trash2, Plus, Save } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { getAllProducts, saveProducts, addProduct as addProductToStorage, updateProduct as updateProductInStorage, deleteProduct as deleteProductFromStorage } from '@/utils/productStorage';
 
 const AdminDashboard: React.FC = () => {
-  const { products, addProduct, updateProduct, deleteProduct, syncWithServer } = useAdmin();
+  const { products: contextProducts, addProduct, updateProduct, deleteProduct, syncWithServer } = useAdmin();
+  const [products, setProducts] = useState<Product[]>([]);
   const { toast } = useToast();
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -24,6 +26,12 @@ const AdminDashboard: React.FC = () => {
     affiliateLink: '',
     description: ''
   });
+
+  // Carregar produtos do storage ao iniciar
+  useEffect(() => {
+    const storedProducts = getAllProducts();
+    setProducts(storedProducts);
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -43,7 +51,17 @@ const AdminDashboard: React.FC = () => {
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Adicionar ao contexto
     addProduct(formData);
+    
+    // Adicionar diretamente ao storage
+    const newProduct = addProductToStorage(formData);
+    
+    // Atualizar estado local
+    setProducts(prev => [...prev, newProduct]);
+    
+    // Resetar formulário
     setFormData({
       name: '',
       image: '',
@@ -55,19 +73,13 @@ const AdminDashboard: React.FC = () => {
     });
     setIsAddingProduct(false);
     
-    // Forçar sincronização após adicionar produto
+    // Forçar sincronização
     await syncWithServer();
     
     toast({
       title: 'Produto adicionado',
       description: 'O produto foi adicionado com sucesso.',
     });
-    
-    // Forçar atualização do localStorage
-    localStorage.setItem('admin_products', JSON.stringify([...products, {...formData, id: Date.now().toString()}]));
-    
-    // Disparar evento de storage manualmente
-    window.dispatchEvent(new Event('storage'));
   };
 
   const handleUpdateProduct = async (e: React.FormEvent) => {
@@ -77,44 +89,46 @@ const AdminDashboard: React.FC = () => {
         ...formData,
         id: editingProduct.id
       };
+      
+      // Atualizar no contexto
       updateProduct(updatedProduct);
+      
+      // Atualizar diretamente no storage
+      updateProductInStorage(updatedProduct);
+      
+      // Atualizar estado local
+      setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
+      
       setEditingProduct(null);
       
-      // Forçar sincronização após atualizar produto
+      // Forçar sincronização
       await syncWithServer();
       
       toast({
         title: 'Produto atualizado',
         description: 'O produto foi atualizado com sucesso.',
       });
-      
-      // Forçar atualização do localStorage
-      const updatedProducts = products.map(p => p.id === updatedProduct.id ? updatedProduct : p);
-      localStorage.setItem('admin_products', JSON.stringify(updatedProducts));
-      
-      // Disparar evento de storage manualmente
-      window.dispatchEvent(new Event('storage'));
     }
   };
 
   const handleDeleteProduct = async (id: string) => {
     if (window.confirm('Tem certeza que deseja excluir este produto?')) {
+      // Excluir do contexto
       deleteProduct(id);
       
-      // Forçar sincronização após excluir produto
+      // Excluir diretamente do storage
+      deleteProductFromStorage(id);
+      
+      // Atualizar estado local
+      setProducts(prev => prev.filter(p => p.id !== id));
+      
+      // Forçar sincronização
       await syncWithServer();
       
       toast({
         title: 'Produto excluído',
         description: 'O produto foi excluído com sucesso.',
       });
-      
-      // Forçar atualização do localStorage
-      const updatedProducts = products.filter(p => p.id !== id);
-      localStorage.setItem('admin_products', JSON.stringify(updatedProducts));
-      
-      // Disparar evento de storage manualmente
-      window.dispatchEvent(new Event('storage'));
     }
   };
 
@@ -132,6 +146,9 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleSyncProducts = async () => {
+    // Salvar produtos atuais diretamente no storage
+    saveProducts(products);
+    
     const success = await syncWithServer();
     
     if (success) {
@@ -139,12 +156,6 @@ const AdminDashboard: React.FC = () => {
         title: 'Sincronização concluída',
         description: 'Todos os produtos foram sincronizados com sucesso.',
       });
-      
-      // Forçar atualização do localStorage
-      localStorage.setItem('admin_products', JSON.stringify(products));
-      
-      // Disparar evento de storage manualmente
-      window.dispatchEvent(new Event('storage'));
     } else {
       toast({
         title: 'Erro na sincronização',

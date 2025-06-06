@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
 import CategoryFilter from './CategoryFilter';
 import PromotionalBanner from './PromotionalBanner';
 import FeaturedProductsCarousel from './FeaturedProductsCarousel';
 import { Product } from '@/data/products';
-import { products as fallbackProducts } from '@/data/products';
 import { RefreshCw } from 'lucide-react';
+import { getAllProducts, PRODUCTS_UPDATED_EVENT } from '@/utils/productStorage';
 
 // Mapeamento de categorias em inglês para português
 const categoryTranslations: Record<string, string> = {
@@ -16,8 +16,6 @@ const categoryTranslations: Record<string, string> = {
   'accessories': 'Acessórios',
 };
 
-const STORAGE_KEY_PRODUCTS = 'admin_products';
-
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -26,60 +24,21 @@ const HomePage = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Função para recarregar produtos quando o localStorage mudar
-  const loadProducts = useCallback(async () => {
+  // Função para recarregar produtos
+  const loadProducts = () => {
     try {
       setIsRefreshing(true);
       console.log("Carregando produtos...");
       
-      // Primeiro tenta carregar do localStorage
-      const storedProducts = localStorage.getItem(STORAGE_KEY_PRODUCTS);
-      if (storedProducts) {
-        console.log("Produtos encontrados no localStorage");
-        const parsedProducts = JSON.parse(storedProducts);
-        setProducts(parsedProducts);
-        
-        // Extrair categorias únicas e traduzir para português
-        const uniqueCategories = Array.from(
-          new Set(parsedProducts.map((p: Product) => p.category).filter(Boolean))
-        ) as string[];
-        
-        // Traduzir categorias e remover duplicatas
-        const translatedCategories = uniqueCategories
-          .map(category => categoryTranslations[category] || category)
-          .filter((value, index, self) => self.indexOf(value) === index);
-        
-        setCategories(translatedCategories);
-        
-        // Manter a categoria selecionada se existir nos novos produtos
-        if (selectedCategory && !translatedCategories.includes(selectedCategory)) {
-          setSelectedCategory(null);
-        }
-      } else {
-        console.log("Nenhum produto encontrado no localStorage, usando fallback");
-        // Se não houver no localStorage, usa o fallback
-        setProducts(fallbackProducts);
-        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(fallbackProducts));
-        
-        // Extrair categorias únicas do fallback e traduzir
-        const uniqueCategories = Array.from(
-          new Set(fallbackProducts.map(p => p.category).filter(Boolean))
-        ) as string[];
-        
-        // Traduzir categorias e remover duplicatas
-        const translatedCategories = uniqueCategories
-          .map(category => categoryTranslations[category] || category)
-          .filter((value, index, self) => self.indexOf(value) === index);
-        
-        setCategories(translatedCategories);
-      }
-    } catch (error) {
-      console.error('Erro ao carregar produtos:', error);
-      setProducts(fallbackProducts);
+      // Carregar produtos do utilitário de armazenamento
+      const loadedProducts = getAllProducts();
+      console.log(`${loadedProducts.length} produtos carregados`);
       
-      // Extrair categorias únicas do fallback em caso de erro
+      setProducts(loadedProducts);
+      
+      // Extrair categorias únicas e traduzir para português
       const uniqueCategories = Array.from(
-        new Set(fallbackProducts.map(p => p.category).filter(Boolean))
+        new Set(loadedProducts.map((p: Product) => p.category).filter(Boolean))
       ) as string[];
       
       // Traduzir categorias e remover duplicatas
@@ -88,52 +47,47 @@ const HomePage = () => {
         .filter((value, index, self) => self.indexOf(value) === index);
       
       setCategories(translatedCategories);
+      
+      // Manter a categoria selecionada se existir nos novos produtos
+      if (selectedCategory && !translatedCategories.includes(selectedCategory)) {
+        setSelectedCategory(null);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar produtos:', error);
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  }, [selectedCategory]);
+  };
 
-  // Carregar produtos inicialmente
+  // Carregar produtos inicialmente e configurar listeners
   useEffect(() => {
     loadProducts();
     
-    // Adicionar um listener de evento personalizado para recarregar produtos
-    const handleReloadProducts = () => {
-      console.log("Evento de recarga de produtos recebido");
+    // Listener para evento personalizado
+    const handleProductsUpdated = () => {
+      console.log("Evento de produtos atualizados recebido");
       loadProducts();
     };
     
-    window.addEventListener('reloadProducts', handleReloadProducts);
-    
-    // Monitorar mudanças no localStorage
+    // Listener para evento de storage
     const handleStorageChange = (e: StorageEvent) => {
-      console.log("Storage change event:", e.key);
-      if (e.key === STORAGE_KEY_PRODUCTS || e.key === 'admin_banners' || e.key === 'admin_daily_deal') {
+      if (e.key === 'admin_products') {
+        console.log("Evento de storage recebido para produtos");
         loadProducts();
       }
     };
     
+    // Adicionar listeners
+    window.addEventListener(PRODUCTS_UPDATED_EVENT, handleProductsUpdated);
     window.addEventListener('storage', handleStorageChange);
     
-    // Verificar a cada 3 segundos se há mudanças no localStorage
-    const checkInterval = setInterval(() => {
-      const storedProducts = localStorage.getItem(STORAGE_KEY_PRODUCTS);
-      if (storedProducts) {
-        const parsedProducts = JSON.parse(storedProducts);
-        if (JSON.stringify(parsedProducts) !== JSON.stringify(products)) {
-          console.log("Mudança detectada no intervalo de verificação");
-          loadProducts();
-        }
-      }
-    }, 3000);
-    
     return () => {
-      window.removeEventListener('reloadProducts', handleReloadProducts);
+      // Remover listeners
+      window.removeEventListener(PRODUCTS_UPDATED_EVENT, handleProductsUpdated);
       window.removeEventListener('storage', handleStorageChange);
-      clearInterval(checkInterval);
     };
-  }, [loadProducts, products]);
+  }, []);
 
   // Filtrar produtos por categoria
   useEffect(() => {
