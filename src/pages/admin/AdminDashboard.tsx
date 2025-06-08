@@ -7,9 +7,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, Edit, Trash2, Plus, Save, RefreshCw, Download, Upload, BarChart3 } from 'lucide-react';
+import { AlertCircle, Edit, Trash2, Plus, Save, RefreshCw, Download, Upload, BarChart3, CloudSync } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getAllProducts, saveProducts, addProduct as addProductToStorage, updateProduct as updateProductInStorage, deleteProduct as deleteProductFromStorage, clearProducts } from '@/utils/productStorage';
+import { useProductsDatabase } from '@/hooks/useProductsDatabase';
 import ProductStats from '@/components/admin/ProductStats';
 
 const AdminDashboard: React.FC = () => {
@@ -20,6 +21,17 @@ const AdminDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('products');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Firebase Realtime Database hook
+  const { 
+    products: firebaseProducts, 
+    loading: firebaseLoading, 
+    addProduct: addProductToFirebase,
+    updateProduct: updateProductInFirebase,
+    deleteProduct: deleteProductFromFirebase,
+    syncLocalToFirebase,
+    isProcessing: isSyncingFirebase
+  } = useProductsDatabase();
   const [formData, setFormData] = useState<Omit<Product, 'id'>>({
     name: '',
     image: '',
@@ -30,10 +42,20 @@ const AdminDashboard: React.FC = () => {
     description: ''
   });
 
-  // Carregar produtos do storage ao iniciar
+  // Carregar produtos do storage e Firebase ao iniciar
   useEffect(() => {
     loadProducts();
   }, []);
+
+  // Usar produtos do Firebase quando disponíveis
+  useEffect(() => {
+    if (firebaseProducts && firebaseProducts.length > 0) {
+      // Manter os produtos do localStorage se não houver produtos no Firebase
+      if (products.length === 0) {
+        setProducts(firebaseProducts);
+      }
+    }
+  }, [firebaseProducts]);
 
   const loadProducts = () => {
     const storedProducts = getAllProducts();
@@ -65,6 +87,12 @@ const AdminDashboard: React.FC = () => {
     // Atualizar estado local
     setProducts(prev => [...prev, newProduct]);
     
+    // Adicionar ao Firebase
+    await addProductToFirebase({
+      ...formData,
+      id: newProduct.id // Manter o mesmo ID para consistência
+    });
+    
     // Resetar formulário
     setFormData({
       name: '',
@@ -79,7 +107,7 @@ const AdminDashboard: React.FC = () => {
     
     toast({
       title: 'Produto adicionado',
-      description: 'O produto foi adicionado com sucesso.',
+      description: 'O produto foi adicionado com sucesso ao sistema e ao Firebase.',
     });
   };
 
@@ -94,6 +122,9 @@ const AdminDashboard: React.FC = () => {
       // Atualizar diretamente no storage
       updateProductInStorage(updatedProduct);
       
+      // Atualizar no Firebase
+      await updateProductInFirebase(updatedProduct);
+      
       // Atualizar estado local
       setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
       
@@ -101,7 +132,7 @@ const AdminDashboard: React.FC = () => {
       
       toast({
         title: 'Produto atualizado',
-        description: 'O produto foi atualizado com sucesso.',
+        description: 'O produto foi atualizado com sucesso no sistema e no Firebase.',
       });
     }
   };
@@ -111,12 +142,15 @@ const AdminDashboard: React.FC = () => {
       // Excluir diretamente do storage
       deleteProductFromStorage(id);
       
+      // Excluir do Firebase
+      await deleteProductFromFirebase(id);
+      
       // Atualizar estado local
       setProducts(prev => prev.filter(p => p.id !== id));
       
       toast({
         title: 'Produto excluído',
-        description: 'O produto foi excluído com sucesso.',
+        description: 'O produto foi excluído com sucesso do sistema e do Firebase.',
       });
     }
   };
@@ -134,13 +168,16 @@ const AdminDashboard: React.FC = () => {
     });
   };
 
-  const handleSyncProducts = () => {
+  const handleSyncProducts = async () => {
     // Salvar produtos atuais diretamente no storage
     saveProducts(products);
     
+    // Sincronizar com o Firebase
+    await syncLocalToFirebase(products);
+    
     toast({
       title: 'Sincronização concluída',
-      description: 'Todos os produtos foram sincronizados com sucesso.',
+      description: 'Todos os produtos foram sincronizados com o localStorage e Firebase.',
     });
   };
 
@@ -361,6 +398,11 @@ const AdminDashboard: React.FC = () => {
             Importar
           </Button>
           
+          <Button onClick={handleSyncProducts} variant="outline" disabled={isSyncingFirebase}>
+            <CloudSync className={`mr-2 h-4 w-4 ${isSyncingFirebase ? 'animate-spin' : ''}`} />
+            Sincronizar Firebase
+          </Button>
+          
           <input 
             type="file" 
             ref={fileInputRef} 
@@ -412,63 +454,71 @@ const AdminDashboard: React.FC = () => {
           )}
 
           {!isAddingProduct && !editingProduct && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.length > 0 ? (
-                products.map((product) => (
-                  <Card key={product.id}>
-                    <div className="aspect-video w-full overflow-hidden">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://placehold.co/600x400?text=Imagem+Indisponível';
-                        }}
-                      />
-                    </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-bold mb-2 line-clamp-1">{product.name}</h3>
-                      <div className="flex justify-between mb-2">
-                        <div className="text-sm text-gray-500">Preço Original:</div>
-                        <div className="font-medium">R$ {product.originalPrice.toFixed(2)}</div>
-                      </div>
-                      <div className="flex justify-between mb-4">
-                        <div className="text-sm text-gray-500">Preço com Desconto:</div>
-                        <div className="font-medium text-green-600">R$ {product.discountPrice.toFixed(2)}</div>
-                      </div>
-                      <div className="flex justify-end space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEditProduct(product)}
-                        >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Editar
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleDeleteProduct(product.id)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Excluir
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <div className="col-span-full">
-                  <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Nenhum produto encontrado</AlertTitle>
-                    <AlertDescription>
-                      Clique em "Adicionar Produto" para criar seu primeiro produto ou "Importar" para carregar produtos de um arquivo.
-                    </AlertDescription>
-                  </Alert>
+            <>
+              {firebaseLoading && (
+                <div className="w-full p-4 text-center">
+                  <p className="text-gray-500">Carregando produtos do Firebase...</p>
                 </div>
               )}
-            </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {products.length > 0 ? (
+                  products.map((product) => (
+                    <Card key={product.id}>
+                      <div className="aspect-video w-full overflow-hidden">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://placehold.co/600x400?text=Imagem+Indisponível';
+                          }}
+                        />
+                      </div>
+                      <CardContent className="p-4">
+                        <h3 className="font-bold mb-2 line-clamp-1">{product.name}</h3>
+                        <div className="flex justify-between mb-2">
+                          <div className="text-sm text-gray-500">Preço Original:</div>
+                          <div className="font-medium">R$ {product.originalPrice.toFixed(2)}</div>
+                        </div>
+                        <div className="flex justify-between mb-4">
+                          <div className="text-sm text-gray-500">Preço com Desconto:</div>
+                          <div className="font-medium text-green-600">R$ {product.discountPrice.toFixed(2)}</div>
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditProduct(product)}
+                          >
+                            <Edit className="h-4 w-4 mr-1" />
+                            Editar
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDeleteProduct(product.id)}
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Excluir
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="col-span-full">
+                    <Alert>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Nenhum produto encontrado</AlertTitle>
+                      <AlertDescription>
+                        Clique em "Adicionar Produto" para criar seu primeiro produto ou "Importar" para carregar produtos de um arquivo.
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </TabsContent>
         
