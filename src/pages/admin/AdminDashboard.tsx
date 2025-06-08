@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, Edit, Trash2, Plus, Save, RefreshCw, Download, Upload, BarChart3, CloudSync } from 'lucide-react';
+import { AlertCircle, Edit, Trash2, Plus, RefreshCw, Download, Upload, Cloud } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getAllProducts, saveProducts, addProduct as addProductToStorage, updateProduct as updateProductInStorage, deleteProduct as deleteProductFromStorage, clearProducts } from '@/utils/productStorage';
 import { useProductsDatabase } from '@/hooks/useProductsDatabase';
@@ -88,10 +88,7 @@ const AdminDashboard: React.FC = () => {
     setProducts(prev => [...prev, newProduct]);
     
     // Adicionar ao Firebase
-    await addProductToFirebase({
-      ...formData,
-      id: newProduct.id // Manter o mesmo ID para consistência
-    });
+    await addProductToFirebase(formData);
     
     // Resetar formulário
     setFormData({
@@ -399,7 +396,7 @@ const AdminDashboard: React.FC = () => {
           </Button>
           
           <Button onClick={handleSyncProducts} variant="outline" disabled={isSyncingFirebase}>
-            <CloudSync className={`mr-2 h-4 w-4 ${isSyncingFirebase ? 'animate-spin' : ''}`} />
+            <Cloud className={`mr-2 h-4 w-4 ${isSyncingFirebase ? 'animate-spin' : ''}`} />
             Sincronizar Firebase
           </Button>
           
