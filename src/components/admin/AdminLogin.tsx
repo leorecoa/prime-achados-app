@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/integrations/firebase/client';
+import { auth, database } from '@/integrations/firebase/client';
+import { ref, set } from 'firebase/database';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('admin@primeachadinhos.com');
@@ -21,7 +22,13 @@ const AdminLogin: React.FC = () => {
     
     try {
       // Autenticação Firebase
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Registra último login
+      if (userCredential.user) {
+        await set(ref(database, `users/${userCredential.user.uid}/lastLogin`), Date.now());
+        await set(ref(database, `users/${userCredential.user.uid}/email`), email);
+      }
       
       // Autenticação local
       if (login(password)) {

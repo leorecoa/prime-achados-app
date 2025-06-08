@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +16,7 @@ import AdminBanners from "./pages/admin/AdminBanners";
 import AdminLayout from "./components/admin/AdminLayout";
 import { AdminProvider } from "./contexts/AdminContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { initializeFirebaseData } from "./utils/firebaseInit";
 
 // Configuração do React Query com retry e staleTime
 const queryClient = new QueryClient({
@@ -29,6 +30,15 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  useEffect(() => {
+    // Inicializa dados do Firebase se necessário
+    initializeFirebaseData().then(success => {
+      if (success) {
+        console.log("Estrutura de dados Firebase inicializada com sucesso");
+      }
+    });
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
