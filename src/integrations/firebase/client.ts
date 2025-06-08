@@ -1,6 +1,7 @@
 // firebase/client.ts
 import { initializeApp } from 'firebase/app';
 import { getDatabase } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBMp0eQpL2f6oW2dWzC4KldMuXs8Ku5RgY",
@@ -15,5 +16,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+const auth = getAuth(app); // Adicionado para controle de acesso admin
 
-export { app, database };
+export { app, database, auth };
