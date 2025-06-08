@@ -1,13 +1,9 @@
-/// <reference types="vite/client" />
-
-import { defineConfig, UserConfig } from "vite";
-// @ts-ignore
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-// @ts-ignore
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }: { mode: string }): UserConfig => ({
+export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
@@ -16,7 +12,7 @@ export default defineConfig(({ mode }: { mode: string }): UserConfig => ({
     react(),
     mode === 'development' &&
     componentTagger(),
-  ].filter(Boolean as any),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": "/src",
