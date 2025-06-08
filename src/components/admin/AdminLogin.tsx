@@ -1,26 +1,42 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/integrations/firebase/client';
 
 const AdminLogin: React.FC = () => {
+  const [email, setEmail] = useState('admin@primeachadinhos.com');
   const [password, setPassword] = useState('');
   const { login } = useAdmin();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (login(password)) {
-      navigate('/admin/dashboard');
-    } else {
+    try {
+      // Autenticação Firebase
+      await signInWithEmailAndPassword(auth, email, password);
+      
+      // Autenticação local
+      if (login(password)) {
+        navigate('/admin/dashboard');
+      } else {
+        toast({
+          title: 'Erro de autenticação local',
+          description: 'Senha local incorreta. Tente novamente.',
+          variant: 'destructive',
+        });
+      }
+    } catch (error: any) {
       toast({
         title: 'Erro de autenticação',
-        description: 'Senha incorreta. Tente novamente.',
+        description: error.message || 'Falha na autenticação. Verifique suas credenciais.',
         variant: 'destructive',
       });
     }
@@ -36,8 +52,16 @@ const AdminLogin: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="mb-2"
+              />
+              <Input
                 type="password"
-                placeholder="Digite a senha de administrador"
+                placeholder="Senha"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

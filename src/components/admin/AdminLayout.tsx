@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
-import { Outlet, useNavigate, Link } from 'react-router-dom';
+import { Outlet, useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { LayoutDashboard, Calendar, ImageIcon, LogOut } from 'lucide-react';
 
 const AdminLayout: React.FC = () => {
   const { isAuthenticated, logout } = useAdmin();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +21,12 @@ const AdminLayout: React.FC = () => {
     navigate('/admin');
   };
 
+  // Verificação de autenticação Firebase
+  if (!user) {
+    return <Navigate to="/admin" replace />;
+  }
+
+  // Verificação de autenticação local
   if (!isAuthenticated) {
     return null;
   }

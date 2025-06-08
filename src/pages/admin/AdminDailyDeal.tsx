@@ -7,14 +7,29 @@ import { Product } from '@/data/products';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Save } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useDatabase } from '@/hooks/useDatabase';
 
 const AdminDailyDeal: React.FC = () => {
-  const { dailyDeal, updateDailyDeal, syncWithServer, isSyncing } = useAdmin();
+  const { dailyDeal: localDailyDeal, updateDailyDeal, syncWithServer, isSyncing } = useAdmin();
+  const { data: firebaseDailyDeal, updateData, loading } = useDatabase<{
+    productId: string;
+    discount: number;
+    active: boolean;
+  }>('dailyDeal');
   const { toast } = useToast();
   const [syncError, setSyncError] = useState<string | null>(null);
 
   const handleUpdateDailyDeal = (product: Product) => {
+    // Atualiza no contexto local
     updateDailyDeal(product);
+    
+    // Atualiza no Firebase
+    updateData({
+      productId: product.id,
+      discount: product.discountPercentage || 0,
+      active: true
+    });
+    
     toast({
       title: 'Achado do Dia atualizado',
       description: 'O Achado do Dia foi atualizado com sucesso.',
@@ -24,7 +39,17 @@ const AdminDailyDeal: React.FC = () => {
   const handleSync = async () => {
     setSyncError(null);
     try {
+      // Sincroniza com o servidor local
       const success = await syncWithServer();
+      
+      // Sincroniza com o Firebase
+      if (localDailyDeal) {
+        await updateData({
+          productId: localDailyDeal.id,
+          discount: localDailyDeal.discountPercentage || 0,
+          active: true
+        });
+      }
       
       if (success) {
         toast({
@@ -75,11 +100,24 @@ const AdminDailyDeal: React.FC = () => {
           <CardTitle>Configurar Achado do Dia</CardTitle>
         </CardHeader>
         <CardContent>
-          {dailyDeal ? (
-            <ProductForm 
-              product={dailyDeal} 
-              onSubmit={handleUpdateDailyDeal} 
-            />
+          {loading ? (
+            <p>Carregando dados do Firebase...</p>
+          ) : localDailyDeal ? (
+            <>
+              <ProductForm 
+                product={localDailyDeal} 
+                onSubmit={handleUpdateDailyDeal} 
+              />
+              
+              {firebaseDailyDeal && (
+                <div className="mt-4 p-4 bg-gray-50 rounded-md">
+                  <h3 className="font-medium mb-2">Dados no Firebase:</h3>
+                  <p>ID do Produto: {firebaseDailyDeal.productId}</p>
+                  <p>Desconto: {firebaseDailyDeal.discount}%</p>
+                  <p>Status: {firebaseDailyDeal.active ? 'Ativo' : 'Inativo'}</p>
+                </div>
+              )}
+            </>
           ) : (
             <p>Carregando...</p>
           )}

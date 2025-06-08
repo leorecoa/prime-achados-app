@@ -15,6 +15,7 @@ import AdminDailyDeal from "./pages/admin/AdminDailyDeal";
 import AdminBanners from "./pages/admin/AdminBanners";
 import AdminLayout from "./components/admin/AdminLayout";
 import { AdminProvider } from "./contexts/AdminContext";
+import { AuthProvider } from "./contexts/AuthContext";
 
 // Configuração do React Query com retry e staleTime
 const queryClient = new QueryClient({
@@ -30,31 +31,33 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AdminProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/sobre" element={<AboutPage />} />
-              
-              {/* Admin Routes */}
-              <Route path="/admin" element={<AdminIndex />} />
-              <Route path="/admin/*" element={<AdminLayout />}>
-                <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="daily-deal" element={<AdminDailyDeal />} />
-                <Route path="banners" element={<AdminBanners />} />
-              </Route>
-              
-              {/* Catch-all route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <AdminAccessButton />
-          </BrowserRouter>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </TooltipProvider>
-      </AdminProvider>
+      <AuthProvider>
+        <AdminProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/sobre" element={<AboutPage />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin" element={<AdminIndex />} />
+                <Route path="/admin/*" element={<AdminLayout />}>
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="daily-deal" element={<AdminDailyDeal />} />
+                  <Route path="banners" element={<AdminBanners />} />
+                </Route>
+                
+                {/* Catch-all route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <AdminAccessButton />
+            </BrowserRouter>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </TooltipProvider>
+        </AdminProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
