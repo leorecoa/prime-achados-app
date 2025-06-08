@@ -1,4 +1,7 @@
+/// <reference types="vite/client" />
+
 import { defineConfig } from "vite";
+// @ts-ignore
 import react from "@vitejs/plugin-react-swc";
 // @ts-ignore
 import { componentTagger } from "lovable-tagger";
