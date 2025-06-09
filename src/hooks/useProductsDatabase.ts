@@ -5,6 +5,34 @@ import { Product } from '@/data/products';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
 
+// Função para inicializar a estrutura básica
+export async function initializeProductsDatabase() {
+  try {
+    // Verificar se já existe a estrutura básica
+    const snapshot = await get(ref(database, 'products'));
+    
+    if (!snapshot.exists()) {
+      // Criar estrutura inicial com um produto de exemplo
+      await set(ref(database, 'products/initial'), {
+        name: "Produto Exemplo",
+        image: "https://placehold.co/600x400",
+        originalPrice: 99.99,
+        discountPrice: 79.99,
+        category: "exemplo",
+        affiliateLink: "https://exemplo.com",
+        description: "Produto de exemplo para inicializar o banco de dados",
+        timestamp: Date.now()
+      });
+      console.log("Estrutura de produtos inicializada no Firebase");
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Erro ao inicializar estrutura de produtos:", error);
+    return false;
+  }
+}
+
 export function useProductsDatabase() {
   const { data: products, loading, error } = useDatabase<Record<string, Product>>('products');
   const { toast } = useToast();
