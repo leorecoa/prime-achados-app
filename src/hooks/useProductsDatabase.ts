@@ -51,6 +51,10 @@ export function useProductsDatabase() {
       const newProductRef = push(ref(database, 'products'));
       const newProduct = {
         ...product,
+        discount: product.discount || 0,
+        rating: product.rating || 0,
+        category: product.category || "",
+        description: product.description || "",
         timestamp: Date.now()
       };
       
@@ -82,6 +86,10 @@ export function useProductsDatabase() {
       const { id, ...productData } = product;
       await update(ref(database, `products/${id}`), {
         ...productData,
+        discount: productData.discount || 0,
+        rating: productData.rating || 0,
+        category: productData.category || "",
+        description: productData.description || "",
         updatedAt: Date.now()
       });
       
@@ -141,6 +149,10 @@ export function useProductsDatabase() {
         if (productId) {
           updates[`products/${productId}`] = {
             ...productData,
+            discount: productData.discount || 0,
+            rating: productData.rating || 0,
+            category: productData.category || "",
+            description: productData.description || "",
             importedAt: Date.now()
           };
         }
@@ -179,11 +191,11 @@ export function useProductsDatabase() {
           image: product.image,
           originalPrice: product.originalPrice,
           discountPrice: product.discountPrice,
-          discount: product.discount,
-          rating: product.rating,
-          category: product.category,
+          discount: product.discount || 0, // Adicione valor padrão
+          rating: product.rating || 0,     // Adicione valor padrão
+          category: product.category || "",
           affiliateLink: product.affiliateLink,
-          description: product.description,
+          description: product.description || "",
           syncedAt: Date.now()
         };
       });
