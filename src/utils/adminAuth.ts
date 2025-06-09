@@ -1,14 +1,13 @@
 import { auth } from '../integrations/firebase/client';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
-// Credenciais do administrador
 export const ADMIN_EMAIL = 'admin@primeachadinhos.com';
-export const ADMIN_PASSWORD = 'Admin@123';
+export const ADMIN_PASSWORD = '292404Leo';
 
-// Função para criar o usuário admin se não existir
+// Função para tentar criar o usuário admin se não existir
 export async function setupAdminUser() {
   try {
-    // Tenta fazer login primeiro para verificar se o usuário já existe
+    // Tenta fazer login primeiro
     await signInWithEmailAndPassword(auth, ADMIN_EMAIL, ADMIN_PASSWORD);
     console.log('Admin já existe, login realizado com sucesso');
     return true;
@@ -28,9 +27,4 @@ export async function setupAdminUser() {
       return false;
     }
   }
-}
-
-// Função para verificar se o usuário atual é admin
-export function isAdminUser(email: string | null) {
-  return email === ADMIN_EMAIL;
 }
