@@ -43,6 +43,15 @@ const App = () => {
             console.log("Usuário admin configurado com sucesso");
           }
         });
+        
+        // Inicializa estrutura de produtos
+        import('./hooks/useProductsDatabase').then(module => {
+          module.initializeProductsDatabase().then(result => {
+            if (result) {
+              console.log("Estrutura de produtos inicializada com sucesso");
+            }
+          });
+        });
       }
     });
   }, []);
