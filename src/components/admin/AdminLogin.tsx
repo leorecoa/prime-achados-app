@@ -12,7 +12,7 @@ import { ref, set } from 'firebase/database';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('admin@primeachadinhos.com');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('292404Leo');
   const { login } = useAdmin();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -21,6 +21,15 @@ const AdminLogin: React.FC = () => {
     e.preventDefault();
     
     try {
+      // Forçar login com credenciais fixas para desenvolvimento
+      if (email === 'admin@primeachadinhos.com' && password === '292404Leo') {
+        // Autenticação local
+        if (login('292404Leo')) {
+          navigate('/admin/dashboard');
+          return;
+        }
+      }
+      
       // Autenticação Firebase
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
@@ -41,6 +50,16 @@ const AdminLogin: React.FC = () => {
         });
       }
     } catch (error: any) {
+      console.error('Erro de autenticação:', error);
+      
+      // Tentar autenticação local mesmo se Firebase falhar
+      if (email === 'admin@primeachadinhos.com' && password === '292404Leo') {
+        if (login('292404Leo')) {
+          navigate('/admin/dashboard');
+          return;
+        }
+      }
+      
       toast({
         title: 'Erro de autenticação',
         description: error.message || 'Falha na autenticação. Verifique suas credenciais.',
