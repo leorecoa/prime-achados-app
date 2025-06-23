@@ -14,15 +14,15 @@ export interface Product {
 export const products: Product[] = [
   {
     id: '1',
-    name: 'Smartphone Galaxy Premium 128GB',
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&h=800&fit=crop&format=webp',
-    originalPrice: 1299.99,
-    discountPrice: 899.99,
+    name: 'Bicicleta Aro 29 GT Sprint MX7 24V index Freio Disco Alumínio Suspensão Aero MTB',
+    image: 'https://down-zl-br.img.susercontent.com/br-11134207-7r98o-m5ahnmktxi2a11.webp',
+    originalPrice: 1099.99,
+    discountPrice: 754.00,
     discount: 31,
     rating: 4.8,
-    category: 'electronics',
+    category: 'bicicletas',
     affiliateLink: 'https://amzn.to/45eaCUr',
-    description: 'Smartphone com tela AMOLED de 6.5", processador octa-core e câmera de 108MP.'
+    description: 'Bicicleta Aro 29 GT Sprint MX7 24V index Freio Disco Alumínio Suspensão Aero MTB.'
   },
   {
     id: '2',
