@@ -1,5 +1,6 @@
 {
   "name": "prime-achados-app",
+  "description": "E-commerce app with LocalStorage",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -26,7 +27,6 @@
     "@tanstack/react-query-devtools": "^5.8.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "firebase": "^11.9.0",
     "framer-motion": "^10.16.5",
     "lucide-react": "^0.292.0",
     "next-themes": "^0.4.6",

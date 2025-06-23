@@ -6,9 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth, database } from '@/integrations/firebase/client';
-import { ref, set } from 'firebase/database';
+// Firebase desabilitado
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('admin@primeachadinhos.com');

@@ -3,7 +3,7 @@ import { database } from '../integrations/firebase/client';
 import { useDatabase } from './useDatabase';
 import { Product } from '@/data/products';
 import { useToast } from '@/components/ui/use-toast';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 // Função para inicializar a estrutura básica
 export async function initializeProductsDatabase() {
@@ -44,17 +44,24 @@ export function useProductsDatabase() {
     id: key
   })) : [];
 
-  // Adicionar produto
-  const addProduct = async (product: Omit<Product, 'id'>) => {
+  const addProduct = useCallback(async (product: Omit<Product, 'id'>) => {
     setIsProcessing(true);
     try {
       const newProductRef = push(ref(database, 'products'));
+      if (!newProductRef.key) {
+        throw new Error('Falha ao gerar ID do produto');
+      }
+      
       const newProduct = {
-        ...product,
-        discount: product.discount || 0,
+        name: product.name || '',
+        image: product.image || '',
+        originalPrice: Number(product.originalPrice) || 0,
+        discountPrice: Number(product.discountPrice) || 0,
+        discount: product.discount || Math.round(((product.originalPrice - product.discountPrice) / product.originalPrice) * 100),
         rating: product.rating || 0,
-        category: product.category || "",
-        description: product.description || "",
+        category: product.category || '',
+        affiliateLink: product.affiliateLink || '',
+        description: product.description || '',
         timestamp: Date.now()
       };
       
@@ -62,80 +69,92 @@ export function useProductsDatabase() {
       
       toast({
         title: 'Produto adicionado',
-        description: 'O produto foi adicionado com sucesso ao Firebase.'
+        description: 'Produto salvo com sucesso no Firebase.'
       });
       
-      return { ...newProduct, id: newProductRef.key as string };
+      return { ...newProduct, id: newProductRef.key };
     } catch (error) {
       console.error('Erro ao adicionar produto:', error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível adicionar o produto.',
+        title: 'Erro ao salvar',
+        description: error instanceof Error ? error.message : 'Erro desconhecido ao salvar produto.',
         variant: 'destructive'
       });
       return null;
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [toast]);
 
-  // Atualizar produto
-  const updateProduct = async (product: Product) => {
+  const updateProduct = useCallback(async (product: Product) => {
     setIsProcessing(true);
     try {
+      if (!product.id) {
+        throw new Error('ID do produto é obrigatório');
+      }
+      
       const { id, ...productData } = product;
-      await update(ref(database, `products/${id}`), {
-        ...productData,
-        discount: productData.discount || 0,
+      const updateData = {
+        name: productData.name || '',
+        image: productData.image || '',
+        originalPrice: Number(productData.originalPrice) || 0,
+        discountPrice: Number(productData.discountPrice) || 0,
+        discount: productData.discount || Math.round(((productData.originalPrice - productData.discountPrice) / productData.originalPrice) * 100),
         rating: productData.rating || 0,
-        category: productData.category || "",
-        description: productData.description || "",
+        category: productData.category || '',
+        affiliateLink: productData.affiliateLink || '',
+        description: productData.description || '',
         updatedAt: Date.now()
-      });
+      };
+      
+      await update(ref(database, `products/${id}`), updateData);
       
       toast({
         title: 'Produto atualizado',
-        description: 'O produto foi atualizado com sucesso no Firebase.'
+        description: 'Produto atualizado com sucesso no Firebase.'
       });
       
       return true;
     } catch (error) {
       console.error('Erro ao atualizar produto:', error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível atualizar o produto.',
+        title: 'Erro ao atualizar',
+        description: error instanceof Error ? error.message : 'Erro desconhecido ao atualizar produto.',
         variant: 'destructive'
       });
       return false;
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [toast]);
 
-  // Excluir produto
-  const deleteProduct = async (id: string) => {
+  const deleteProduct = useCallback(async (id: string) => {
     setIsProcessing(true);
     try {
+      if (!id) {
+        throw new Error('ID do produto é obrigatório');
+      }
+      
       await remove(ref(database, `products/${id}`));
       
       toast({
         title: 'Produto excluído',
-        description: 'O produto foi excluído com sucesso do Firebase.'
+        description: 'Produto removido com sucesso do Firebase.'
       });
       
       return true;
     } catch (error) {
       console.error('Erro ao excluir produto:', error);
       toast({
-        title: 'Erro',
-        description: 'Não foi possível excluir o produto.',
+        title: 'Erro ao excluir',
+        description: error instanceof Error ? error.message : 'Erro desconhecido ao excluir produto.',
         variant: 'destructive'
       });
       return false;
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [toast]);
 
   // Importar produtos em lote
   const importProducts = async (productsToImport: Product[]) => {

@@ -5,7 +5,7 @@ import PromotionalBanner from './PromotionalBanner';
 import FeaturedProductsCarousel from './FeaturedProductsCarousel';
 import { Product } from '@/data/products';
 import { RefreshCw } from 'lucide-react';
-import { getAllProducts, PRODUCTS_UPDATED_EVENT } from '@/utils/productStorage';
+import { storage } from '@/lib/storage';
 
 // Mapeamento de categorias em inglês para português
 const categoryTranslations: Record<string, string> = {
@@ -30,8 +30,8 @@ const HomePage = () => {
       setIsRefreshing(true);
       console.log("Carregando produtos...");
       
-      // Carregar produtos do utilitário de armazenamento
-      const loadedProducts = getAllProducts();
+      // Carregar produtos do storage
+      const loadedProducts = storage.getProducts();
       console.log(`${loadedProducts.length} produtos carregados`);
       
       setProducts(loadedProducts);
@@ -78,13 +78,9 @@ const HomePage = () => {
       }
     };
     
-    // Adicionar listeners
-    window.addEventListener(PRODUCTS_UPDATED_EVENT, handleProductsUpdated);
     window.addEventListener('storage', handleStorageChange);
     
     return () => {
-      // Remover listeners
-      window.removeEventListener(PRODUCTS_UPDATED_EVENT, handleProductsUpdated);
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);

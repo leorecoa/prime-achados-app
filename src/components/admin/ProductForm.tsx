@@ -9,7 +9,7 @@ import { Image, Link, ExternalLink } from 'lucide-react';
 
 interface ProductFormProps {
   product?: Product;
-  onSubmit: (product: Omit<Product, 'id'> | Product) => void;
+  onSubmit: (product: Product | Omit<Product, 'id'>) => void;
   onCancel?: () => void;
 }
 
@@ -61,6 +61,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Enviando produto:', formData);
     onSubmit(formData);
   };
 
