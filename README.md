@@ -18,10 +18,16 @@
 - Adicionar, editar e excluir produtos
 
 ✅ **Armazenamento Local**  
-- Dados salvos no navegador
+- Dados salvos no navegador (até ~5MB)
+- URLs de imagens externas (não upload)
 
 ✅ **Interface Responsiva**  
 - Design adaptável para todos os dispositivos
+
+## ⚠️ Limitações
+- **Imagens**: Apenas URLs externas (Unsplash, CDNs)
+- **Tamanho**: Limite de ~5MB no LocalStorage
+- **Persistência**: Dados apenas no navegador local
 
 ## 🛠️ Como Executar
 
